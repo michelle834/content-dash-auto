@@ -337,6 +337,11 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
       </div>
     </div>
 
+    <!-- SECCIÓN 1b · KPIs DEL MES CONTRA SU META -->
+    <div class="section-title">🎯 KPIs del mes <span class="muted" id="m_kpimes_mes" style="font-weight:500;font-size:12px"></span></div>
+    <div class="muted" style="margin:0 2px 6px;font-size:11.5px">Mes calendario en curso, contra las metas del mes. No cambia con el filtro de periodo ni de red.</div>
+    <div id="m_kpimes"></div>
+
     <!-- SECCIÓN 2 · KPIs + SCORE + DÍA + BENCHMARK -->
     <div class="section-title">Resumen de la cuenta <span class="muted" id="m_periodo" style="font-weight:500;font-size:12px"></span></div>
     <div id="m_kpis"></div>
@@ -1148,6 +1153,78 @@ function __krReach(net){
 }
 
 
+/* ---------- KPIs DEL MES ----------
+   Metas por mes. Para el mes siguiente se agrega una línea con su clave "AAAA-MM".
+   wa y signups no tienen fuente en la hoja todavía: se muestran con su meta y sin avance. */
+const __KPI_MES={
+  "2026-11":{alcance:223850, er:6.6, li:18150, yt:20000, wa:850, signups:85}
+};
+function __hoyCDMX(){ return new Date(Date.now()-6*36e5).toISOString().slice(0,10); }
+/* Alcance del mes por red, con la misma definición del KR de alcance:
+   TikTok = vistas por video de los videos del mes · Instagram = vistas de la cuenta + colabs ·
+   LinkedIn = impresiones de la cuenta (respaldo: impresiones de los posts del mes) ·
+   YouTube = vistas del canal (respaldo: vistas de los videos del mes). */
+function __alcanceMes(mo){
+  const esColab=v=>/^collab/i.test(String((v&&v.media_id)||''));
+  let tt=0; (DATA.vids||[]).forEach(v=>{ if(String(mPostDate(v.video_create_datetime,false)).slice(0,7)===mo) tt+=num(v.video_views_count); });
+  let ig=0; (DATA.ig_series||[]).forEach(r=>{ if(String(mDay(r.date)).slice(0,7)===mo) ig+=num(r.views); });
+  (DATA.ig_media||[]).forEach(v=>{ if(esColab(v)&&String(mPostDate(v.timestamp,true)).slice(0,7)===mo) ig+=num(v.media_views); });
+  /* La serie de la cuenta de LinkedIn llega con 1-2 días de atraso; los posts del mes
+     a veces ya traen más. Se toma el mayor de los dos para no quedarse corto. */
+  let liS=0, liP=0;
+  (DATA.li_series||[]).forEach(r=>{ if(String(mDay(r.date)).slice(0,7)===mo) liS+=num(r.account_analytics_impression_count); });
+  (DATA.li_posts||[]).forEach(v=>{ if(String(mDay(v.share_published_time)).slice(0,7)===mo) liP+=num(v.share_impression_count); });
+  const li=Math.max(liS,liP);
+  const d=ytDelta("views_lifetime"); let yt=0;
+  Object.keys(d).forEach(k=>{ if(k.slice(0,7)===mo) yt+=Math.max(d[k],0); });
+  if(!yt) (DATA.yt_videos||[]).forEach(v=>{ if(String(mDay(v.published_at)).slice(0,7)===mo) yt+=num(v.views); });
+  return {tt,ig,li,yt,total:tt+ig+li+yt};
+}
+function mRenderKpiMes(){
+  const box=document.getElementById("m_kpimes"); if(!box) return;
+  const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const hoy=__hoyCDMX(), mo=hoy.slice(0,7), y=+mo.slice(0,4), m=+mo.slice(5,7);
+  const diasMes=new Date(y,m,0).getDate(), M=__KPI_MES[mo];
+  const lbl=document.getElementById("m_kpimes_mes"); if(lbl) lbl.textContent="· "+MESES[m-1]+" "+y;
+  if(!M){ box.innerHTML='<div class="muted" style="font-size:12px">Sin metas cargadas para '+MESES[m-1]+'. Se agregan en <code>__KPI_MES</code>.</div>'; return; }
+  /* Días que ya cuentan: hasta el último día que TikTok e Instagram ya reportaron. */
+  const ult=String(mLatestDataDay()||"");
+  const dias=ult.slice(0,7)===mo? Math.max(+ult.slice(8,10),1) : Math.max(+hoy.slice(8,10)-1,1);
+  const frac=Math.min(dias/diasMes,1), faltan=Math.max(diasMes-dias,0);
+  const w={from:mo+"-01",to:mo+"-"+String(diasMes).padStart(2,"0"),day:false};
+  const A=__alcanceMes(mo);
+  const t=mTT(w), g=mIG(w), l=mLI(w), u=mYT(w);
+  const num_=(t.teng||0)+(g.teng||0)+(l.eng||0)+(u.eng||0), den_=(t.tv||0)+(g.tv||0)+(l.imp||0)+(u.views||0);
+  const er=den_>0?num_/den_*100:0;
+  const col=r=>r>=1?"var(--pos)":(r>=0.85?"var(--amber)":"var(--neg)");
+  const barra=(p,c,marca)=>`<div style="position:relative;height:7px;background:var(--line);border-radius:4px;margin-top:10px;overflow:hidden"><div style="width:${Math.min(p,100)}%;height:100%;background:${c}"></div>${marca===false?'':`<div title="donde deberías ir hoy" style="position:absolute;top:0;bottom:0;left:${(frac*100).toFixed(1)}%;width:2px;background:var(--ink);opacity:.45"></div>`}</div>`;
+  const tarjeta=(label,val,meta,sub)=>{
+    const p=meta?val/meta*100:0, ritmo=meta?val/(meta*frac):0, c=col(ritmo);
+    const nec=faltan?Math.max(meta-val,0)/faltan:0;
+    return `<div class="kpi"><div class="label">${label}</div><div class="val">${pf(val)}</div>
+      <div class="delta" style="color:${c}">${Math.round(p)}% de ${pf(meta)} · al día ${dias} tocaba ${pf(meta*frac)}</div>
+      ${barra(p,c)}
+      <div class="delta flat" style="margin-top:8px">${faltan?`Faltan ${pf(Math.max(meta-val,0))}: ${pf(nec)} al día`:'Mes cerrado'}${sub?'<br>'+sub:''}</div></div>`;
+  };
+  const erC=col(M.er?er/M.er:0);
+  const erCard=`<div class="kpi"><div class="label">Engagement ponderado</div><div class="val">${pct(er)}</div>
+      <div class="delta" style="color:${erC}">meta ${pct(M.er)} · ${er>=M.er?'arriba':'abajo'} por ${Math.abs(er-M.er).toFixed(1).replace('.',',')} pts</div>
+      ${barra(M.er?er/M.er*100:0,erC,false)}
+      <div class="delta flat" style="margin-top:8px">TikTok ${pct(t.er)} · Instagram ${pct(g.er)}<br>LinkedIn ${pct(l.er)} · YouTube ${pct(u.er)}</div></div>`;
+  const sinFuente=(label,meta)=>`<div class="kpi" style="opacity:.8"><div class="label">${label}</div><div class="val">—</div>
+      <div class="delta flat">meta ${pf(meta)}</div><div class="delta flat" style="margin-top:8px">Sin fuente conectada: no está en la hoja de métricas.</div></div>`;
+  box.innerHTML=`<div class="grid">
+      ${tarjeta("Alcance de las redes",A.total,M.alcance,`TikTok ${pf(A.tt)} · IG ${pf(A.ig)} · LinkedIn ${pf(A.li)} · YouTube ${pf(A.yt)}`)}
+      ${erCard}
+      ${tarjeta("LinkedIn · impresiones",A.li,M.li,"")}
+      ${tarjeta("YouTube · vistas",A.yt,M.yt,((DATA.yt_series||[]).length||(DATA.yt_videos||[]).length)?"":"Sin datos de YouTube en la hoja todavía.")}
+      ${M.wa?sinFuente("Comunidad de WhatsApp",M.wa):""}
+      ${M.signups?sinFuente("Signups de comunidad",M.signups):""}
+    </div>
+    <div class="muted" style="font-size:11.5px;margin:8px 2px 0">Cuentan ${dias} de ${diasMes} días: hasta el último día que TikTok e Instagram ya reportaron. La rayita de cada barra marca dónde deberías ir hoy; verde = vas al ritmo, ámbar = arriba del 85% del ritmo, rojo = abajo.
+    Alcance = vistas de TikTok, Instagram y YouTube más impresiones de LinkedIn, igual que el KR. Engagement ponderado = interacciones de las piezas del mes de las cuatro redes ÷ su alcance sumado (TikTok e Instagram sobre personas alcanzadas, LinkedIn sobre impresiones, YouTube sobre vistas).</div>`;
+}
+
 /* --- por-red: posts/series filtrados + KPIs --- */
 function mTT(w){
   const P=(DATA.vids||[]).filter(v=>inWd(mPostDate(v.video_create_datetime,false),w));
@@ -1166,7 +1243,7 @@ function mTT(w){
   const folLast=num((DATA.totals||{}).total_followers_count)|| (folS.length?num(folS[folS.length-1].total_followers_count):0);
   const inFol=S.filter(r=>num(r.total_followers_count)>0);
   const gW=inFol.length>1? num(inFol[inFol.length-1].total_followers_count)-num(inFol[0].total_followers_count):0;
-  return {net:"tt",P,S,n:P.length,avgViews:avg(views),er:tv>0?teng/tv*100:0,
+  return {net:"tt",P,S,n:P.length,avgViews:avg(views),er:tv>0?teng/tv*100:0,tv,teng,
     /* Retención = solo VIDEOS. Los carruseles (video_duration=0) no tienen 'vio el video completo'
        y meterlos al promedio hunde el número sin que signifique nada. */
     /* Videos y carruseles juntos. TikTok reporta duración 0 en los carruseles,
@@ -1191,7 +1268,7 @@ function mIG(w){
   const folLast=num((DATA.ig_totals||{}).followers_count);
   const newF=S.reduce((s,r)=>s+num(r.follower_count),0);
   const reels=P.filter(v=>num(v.media_reel_avg_watch_time)>0).map(v=>num(v.media_reel_avg_watch_time)/1000);
-  return {net:"ig",P,S,n:P.length,avgViews:avg(views),er:tv>0?teng/tv*100:0,
+  return {net:"ig",P,S,n:P.length,avgViews:avg(views),er:tv>0?teng/tv*100:0,tv,teng,
     watchSec:avg(reels), folLast, gW:newF};
 }
 function mLI(w){
@@ -1842,7 +1919,7 @@ function buildMetrics(){
   const nets=MF.net==="both"?["tt","ig","li","yt"]:[MF.net];
   const pe=document.getElementById("m_periodo");
   if(pe) pe.textContent = w.day?("· "+w.from):("· "+w.from+" → "+w.to);
-  mRenderKPIs(nets,w); mRenderScore(nets,w); mRenderDay(nets,w); mRenderBench();
+  mRenderKpiMes(); mRenderKPIs(nets,w); mRenderScore(nets,w); mRenderDay(nets,w); mRenderBench();
   mRenderEarly(nets); mRenderCharts(nets,w); mRenderERMonth(nets); mRenderBest(nets,w); mRenderOverAvg(nets,w); mRenderLI(nets,w); mRenderYT(nets,w); mRenderPillars(nets,w);
 }
 function mSetPerf(p){ MF.perf=p; buildMetrics(); }

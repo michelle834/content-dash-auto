@@ -84,6 +84,12 @@ h1{font-size:20px;margin:0}
 .mas{font-size:10.5px;font-weight:700;color:var(--brand);padding:1px 3px;margin-top:auto;background:none;border:0;text-align:left;cursor:pointer}
 .dots{display:none;flex-wrap:wrap;gap:3px;margin-top:2px}
 .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.calvista{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--card)}
+.calvista button{border:0;background:none;color:var(--muted);padding:5px 12px;border-radius:999px;cursor:pointer;font-weight:700;font-size:12px}
+.calvista button.on{background:var(--ink);color:#fff}
+.calgrid.vdots .chip,.calgrid.vdots .mas{display:none}.calgrid.vdots .dots{display:flex;gap:5px}
+.calgrid.vdots .cell{height:92px}.calgrid.vdots .dots i{width:12px;height:12px}
+.calgrid.vdots~.callegend .der{display:none}
 .chip:hover{border-color:var(--brand)}
 .e-idea{border-left-color:var(--gray)!important}.e-proceso{border-left-color:var(--amber)!important}.e-listo{border-left-color:var(--pos)!important}.e-pub{border-left-color:var(--brand)!important}.e-prog{border-left-color:var(--prog)!important}
 .reloj{font-size:10px;font-weight:800;color:var(--prog);margin-left:auto;white-space:nowrap}
@@ -197,6 +203,7 @@ details.pv[open]>summary{margin-bottom:10px}
     <div class="calhead">
       <div class="calnav"><button disabled title="Mes anterior">‹</button><button disabled title="Mes siguiente">›</button></div>
       <div class="calmes">noviembre 2026</div>
+      <div class="calvista" id="calVista" role="group" aria-label="Vista"><button data-v="puntos" aria-pressed="true" class="on">Puntos</button><button data-v="titulos" aria-pressed="false">Títulos</button></div>
       <div class="calseg" id="calSeg" role="group" aria-label="Mostrar">
         <button data-f="todo" class="on" aria-pressed="true">Todas</button>
         <button data-f="carr" aria-pressed="false">Carruseles</button>
@@ -213,11 +220,12 @@ details.pv[open]>summary{margin-bottom:10px}
     <div class="callegend">
       <span><span class="swatch" style="background:var(--pink)"></span>TikTok</span>
       <span><span class="swatch" style="background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))"></span>Instagram</span>
-      <span><span class="swatch" style="background:var(--brand)"></span>Las dos</span>
+      <span><span class="swatch" style="background:var(--brand)"></span>Varias redes</span>
       <span><span class="swatch" style="background:var(--yt)"></span>YouTube</span>
       <span><span class="swatch" style="background:var(--li)"></span>LinkedIn</span>       <span><span class="swatch" style="background:var(--fb)"></span>Facebook</span>
       <span><span class="swatch" style="background:var(--wa)"></span>WhatsApp</span>
       <span><span class="swatch" style="background:var(--ig3)"></span>Taller</span>
+      <span><span class="swatch" style="background:var(--muted)"></span>Grabar o armar</span>
       <span class="der">El borde izquierdo indica su estado: <b>gris</b> por armar · <b>ámbar</b> por grabar · <b>verde</b> listo · <b>verde azulado</b> programado, sale solo · <b>azul</b> publicado</span>
     </div>
     <div id="choques"></div>
@@ -392,6 +400,11 @@ const HOY=hoyCDMX();
 const min=h=>{if(!h)return 2000;if(h==='mañana')return 600;const[a,b]=h.split(':').map(Number);return a*60+(b||0)};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let filtro='todo',abierto=0;
+let vista='puntos';try{vista=localStorage.getItem('cal-nov-vista')||'puntos'}catch(e){}
+function ponVista(){document.getElementById('calGrid').classList.toggle('vdots',vista==='puntos');
+  document.querySelectorAll('#calVista button').forEach(b=>{const on=b.dataset.v===vista;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)})}
+document.getElementById('calVista').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;vista=b.dataset.v;try{localStorage.setItem('cal-nov-vista',vista)}catch(e){};ponVista()});
+ponVista();
 let hechos={};try{hechos=JSON.parse(localStorage.getItem('cal-nov-hechos')||'{}')}catch(e){}
 const guardar=()=>{try{localStorage.setItem('cal-nov-hechos',JSON.stringify(hechos))}catch(e){}};
 const pasa=p=>filtro==='todo'||p.g===filtro;
@@ -426,7 +439,7 @@ function pintar(){
       <div class="dnum"><span class="dw">${DIAS[(d-1)%7].slice(0,3)}</span>${d}${d===HOY?'<span class="hoytag">hoy</span>':''}${dia.hito?`<span class="hito">${esc(dia.hito)}</span>`:''}</div>
       ${(its.length>4?its.slice(0,3):its).map(p=>{const[b,c]=badge(p);return `<button class="chip ${EST[p.e][1]}" data-d="${d}" title="${esc(p.f+' · '+p.ti)}"><span class="rd ${c}">${b}</span><span class="t1">${esc(p.ti)}</span>${p.e==='prog'?'<span class="reloj" title="Programado">🕒</span>':''}</button>`}).join('')}
       ${its.length>4?`<button class="mas" data-d="${d}">+${its.length-3} más</button>`:''}
-      <span class="dots">${its.map(p=>`<i class="rd ${badge(p)[1]}"></i>`).join('')}</span>
+      <span class="dots">${its.map(p=>`<i class="rd ${badge(p)[1]}" title="${esc(p.f+' · '+p.ti)}"></i>`).join('')}</span>
     </div>`;
     // choques: dos posts el mismo día en la misma red
     const cuenta={};dia.items.forEach(p=>p.r.forEach(([r])=>{if(r==='tt'||r==='ig')(cuenta[r]=cuenta[r]||[]).push(p)}));

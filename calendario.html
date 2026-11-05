@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario de noviembre · heru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;500;700&display=swap">
+<style>
+/* Mismo lenguaje que el Content Dash (metricas.html): barra de primer nivel, encabezado con logo en degradado,
+   panel blanco con el calendario del mes del Planner, pastillas de red y borde de estado. Tema claro, como el dash. */
+:root{color-scheme:light;
+  --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e6eaf2;
+  --brand:#1790EC; --brand-soft:#dff4ff; --pink:#fe2c55; --cyan:#11bafa;
+  --ig1:#f58529; --ig2:#dd2a7b; --ig3:#8134af; --pos:#16a34a; --amber:#d97706; --gray:#94a3b8;
+  --li:#0a66c2; --prog:#0d9488; --yt:#ff0000; --wa:#25d366;
+  --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+  --sys:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --tit:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sys);font-size:14px;line-height:1.45}
+h1,h2,.kpi .val{font-family:var(--tit);letter-spacing:-.02em}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:950;background:#fff}
+.nivel1{position:sticky;top:env(safe-area-inset-top,0px);z-index:900;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:22px;
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));box-shadow:0 1px 2px rgba(15,23,42,.04);overflow-x:auto}
+.n1-marca{font-family:var(--tit);font-weight:700;font-size:23px;color:var(--brand);letter-spacing:-.03em;text-decoration:none;padding:12px 0}
+.n1-tabs{display:flex;gap:4px}
+.n1{display:flex;align-items:center;gap:8px;padding:15px 18px;font-family:'Lexend Deca','Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.n1:hover{color:var(--ink)}
+.n1.on{color:var(--brand);font-weight:700;border-bottom-color:var(--brand)}
+@media (max-width:620px){.nivel1{gap:12px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}.n1{padding:13px 12px;font-size:14px}}
+
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 60px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+@media (max-width:500px){.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:14px 0 6px}
+.logo{width:42px;height:42px;border-radius:12px;flex:none;background:linear-gradient(135deg,#15d1fe,#11bafa,#1790EC);display:flex;align-items:center;justify-content:center}
+h1{font-size:20px;margin:0}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.updated{margin-left:auto;font-size:12px;color:var(--muted);text-align:right}
+.updated b{color:var(--ink)}
+
+.section-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 2px 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.section-title .btn-sm:first-of-type{margin-left:auto}
+.muted{color:var(--muted);font-size:12.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi .label{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.kpi .val{font-size:26px;font-weight:800;margin-top:6px}
+.kpi .delta{font-size:12px;color:var(--muted);margin-top:4px}
+.btn-sm{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12.5px;cursor:pointer;color:var(--brand)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);margin-top:10px}
+
+.calhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.calnav{display:inline-flex;gap:6px}
+.calnav button{border:1px solid var(--line);background:var(--card);color:var(--ink);width:34px;height:34px;border-radius:9px;cursor:pointer;font-weight:800;font-size:15px;line-height:1}
+.calnav button:hover{background:var(--brand-soft);border-color:var(--brand)}
+.calnav button:disabled{opacity:.35;cursor:default;background:var(--card);border-color:var(--line)}
+.calmes{font-size:17px;font-weight:800;letter-spacing:-.02em;min-width:150px}
+.calseg{display:inline-flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.calseg button{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:7px 13px;border-radius:999px;cursor:pointer;font-weight:700;font-size:12.5px}
+.calseg button.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,#11bafa,#1790EC)}
+.caldow,.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.caldow{margin-bottom:6px}
+.caldow div{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center;padding:2px 0}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:11px;height:138px;overflow:hidden;padding:7px 7px 8px;display:flex;flex-direction:column;cursor:pointer;transition:background .12s,border-color .12s;min-width:0}
+.cell:hover{border-color:var(--brand)}
+.cell.off{background:#fafbfd;border-style:dashed;opacity:.5;cursor:default}
+.cell.off:hover{border-color:var(--line)}
+.cell.hoy{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-soft) inset}
+.cell.pasado .chip{opacity:.62}
+.dnum{font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:5px;flex:none;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.dnum .dw{display:none}
+.cell.hoy .dnum{color:var(--brand)}
+.hoytag,.hito{font-size:9.5px;font-weight:800;letter-spacing:.05em;background:var(--brand);color:#fff;border-radius:4px;padding:1px 5px;text-transform:uppercase}
+.hito{background:#fff7ed;color:var(--amber);border:1px solid #fed7aa}
+.chip{display:flex;align-items:center;gap:5px;width:100%;text-align:left;border:1px solid var(--line);border-left-width:3px;border-left-color:var(--gray);background:#fff;border-radius:6px;padding:2px 5px;margin-bottom:3px;cursor:pointer;font-size:11px;line-height:1.3;color:var(--ink);min-width:0;flex:none}
+.chip .t1{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mas{font-size:10.5px;font-weight:700;color:var(--brand);padding:1px 3px;margin-top:auto;background:none;border:0;text-align:left;cursor:pointer}
+.dots{display:none;flex-wrap:wrap;gap:3px;margin-top:2px}
+.dots i{width:7px;height:7px;border-radius:50%;display:block}
+.chip:hover{border-color:var(--brand)}
+.e-idea{border-left-color:var(--gray)!important}.e-proceso{border-left-color:var(--amber)!important}.e-listo{border-left-color:var(--pos)!important}.e-pub{border-left-color:var(--brand)!important}.e-prog{border-left-color:var(--prog)!important}
+.reloj{font-size:10px;font-weight:800;color:var(--prog);margin-left:auto;white-space:nowrap}
+.ctop{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.rd{font-size:9px;font-weight:800;letter-spacing:.04em;color:#fff;border-radius:3px;padding:1px 4px;flex:0 0 auto}
+.rd.tt{background:var(--pink)}.rd.ig{background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))}.rd.b{background:var(--brand)}
+.rd.yt{background:var(--yt)}.rd.li{background:var(--li)}.rd.wa{background:var(--wa)}.rd.vivo{background:var(--ig3)}.rd.eq{background:var(--muted)}
+.chip .hr{font-size:10px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip .ttl{font-weight:650;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.callegend{display:flex;gap:8px 14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--muted);align-items:center}
+.callegend b{color:var(--ink);font-weight:700}
+.callegend .der{margin-left:auto}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.choque{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid var(--amber);border-radius:9px;padding:10px 13px;font-size:12.8px;color:#5b4508;margin-top:12px;line-height:1.5}
+@media (max-width:1000px){.calseg{margin-left:0}}
+@media (max-width:760px){
+  .panel#calWrap{padding:12px 10px}
+  .caldow,.calgrid{gap:4px}
+  .caldow div{font-size:10px;letter-spacing:.02em}
+  .cell{height:74px;padding:5px;border-radius:8px}
+  .chip,.mas{display:none}.dots{display:flex}
+  .hito{display:none}.hoytag{font-size:8px;padding:0 3px}
+  .dnum{font-size:12px;margin-bottom:2px}
+  .mesc{display:none}
+}
+
+/* ventana del día */
+.velo{position:fixed;inset:0;background:rgba(15,23,42,.38);z-index:1000;display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--card);border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.25);width:min(600px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden}
+.mh{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.mh h2{font-size:18px;margin:0}
+.mh .sub{margin:0}
+.mh .calnav{margin-left:auto}
+.mb{overflow-y:auto;padding:14px 18px 18px;background:#fafbfe}
+.post{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gray);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.post.ok{opacity:.55}.post.ok .pt{text-decoration:line-through}
+.plats{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
+.plat{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap;color:#fff}
+.plat.tt{background:#111}.plat.ig{background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))}.plat.yt{background:var(--yt)}.plat.li{background:var(--li)}.plat.wa{background:var(--wa)}.plat.vivo{background:var(--ig3)}.plat.eq{background:var(--muted)}
+.est{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;color:var(--muted)}
+.est.listo{color:var(--pos)}.est.proceso{color:var(--amber)}.est.pub{color:var(--brand)}.est.prog{color:var(--prog)}
+.pt{font-size:14.5px;font-weight:700;margin:0 0 3px;line-height:1.3}
+.pn{font-size:12.5px;color:var(--muted);margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.links a{font-size:12px;font-weight:600;text-decoration:none;background:var(--brand-soft);color:#0b5fa5;border-radius:999px;padding:4px 11px}
+.links a:hover{background:#c9ebff}
+.hecho{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12px;color:var(--muted);cursor:pointer;width:fit-content}
+.hecho input{accent-color:var(--brand);width:15px;height:15px;margin:0}
+.callout{background:var(--brand-soft);color:#1e3a8a;border-radius:10px;padding:10px 12px;font-size:12.8px;margin-bottom:10px}
+.vacio{color:var(--muted);font-size:13px;padding:6px 2px}
+</style>
+</head>
+<body>
+
+
+<div class="nivel1">
+  <a class="n1-marca" href="index.html">heru</a>
+  <nav class="n1-tabs">
+    <a class="n1" href="metricas.html"><span>📊</span>Métricas</a>
+    <a class="n1" href="index.html"><span>🧠</span>Cerebro</a>
+    <span class="n1 on"><span>🗓️</span>Calendario</span>
+  </nav>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="logo"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="3.5"/><path d="M3 9.5h18M8 2.8v3.4M16 2.8v3.4"/><circle cx="8.5" cy="14" r="1" fill="#fff" stroke="none"/><circle cx="12" cy="14" r="1" fill="#fff" stroke="none"/><circle cx="15.5" cy="14" r="1" fill="#fff" stroke="none"/></svg></div>
+    <div><h1>Calendario de noviembre</h1>
+      <div class="sub">heru · qué se sube cada día en TikTok, Instagram, YouTube, LinkedIn y WhatsApp</div></div>
+    <div class="updated">Hoy<br><b id="hoyTxt">—</b></div>
+  </header>
+
+  <div class="grid" id="totales" style="margin-top:16px"></div>
+
+  <div class="section-title">🗓️ Calendario del mes <button class="btn-sm" id="btnHoy">Hoy</button></div>
+  <div class="muted" style="margin:0 2px 6px">Qué se sube cada día y a qué red. Haz clic en un día o en un post para ver su hora, su formato y las ligas a sus textos y artes.</div>
+
+  <div class="panel" id="calWrap">
+    <div class="calhead">
+      <div class="calnav"><button disabled title="Mes anterior">‹</button><button disabled title="Mes siguiente">›</button></div>
+      <div class="calmes">noviembre 2026</div>
+      <div class="calseg" id="calSeg" role="group" aria-label="Mostrar">
+        <button data-f="todo" class="on" aria-pressed="true">Todas</button>
+        <button data-f="carr" aria-pressed="false">Carruseles</button>
+        <button data-f="reel" aria-pressed="false">Reels y TikToks</button>
+        <button data-f="yt" aria-pressed="false">YouTube</button>
+        <button data-f="li" aria-pressed="false">LinkedIn</button>
+        <button data-f="wa" aria-pressed="false">WhatsApp</button>
+        <button data-f="vivo" aria-pressed="false">Talleres</button>
+        <button data-f="grab" aria-pressed="false">Grabar y armar</button>
+      </div>
+    </div>
+    <div class="caldow"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
+    <div class="calgrid" id="calGrid"></div>
+    <div class="callegend">
+      <span><span class="swatch" style="background:var(--pink)"></span>TikTok</span>
+      <span><span class="swatch" style="background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))"></span>Instagram</span>
+      <span><span class="swatch" style="background:var(--brand)"></span>Las dos</span>
+      <span><span class="swatch" style="background:var(--yt)"></span>YouTube</span>
+      <span><span class="swatch" style="background:var(--li)"></span>LinkedIn</span>
+      <span><span class="swatch" style="background:var(--wa)"></span>WhatsApp</span>
+      <span><span class="swatch" style="background:var(--ig3)"></span>Taller</span>
+      <span class="der">El borde izquierdo indica su estado: <b>gris</b> por armar · <b>ámbar</b> por grabar · <b>verde</b> listo · <b>verde azulado</b> programado, sale solo · <b>azul</b> publicado</span>
+    </div>
+    <div id="choques"></div>
+  </div>
+
+  <div class="section-title">⏰ Horarios del mes</div>
+  <div class="grid">
+    <div class="kpi"><div class="label">TikTok</div><div class="val">19:00</div><div class="delta">Todos los días. Los carruseles entran en modo foto.</div></div>
+    <div class="kpi"><div class="label">Instagram</div><div class="val">13:00</div><div class="delta">Lunes a viernes. Humor como Trial Reel. Facebook replica solo.</div></div>
+    <div class="kpi"><div class="label">YouTube</div><div class="val">18:00</div><div class="delta">Martes y jueves. Short cada viernes.</div></div>
+    <div class="kpi"><div class="label">LinkedIn</div><div class="val">9:00</div><div class="delta">Martes a jueves.</div></div>
+    <div class="kpi"><div class="label">Taller en vivo</div><div class="val">18:00</div><div class="delta">Cada jueves por Google Meet.</div></div>
+  </div>
+  <p class="muted" style="margin-top:14px">Sale de los docs de reels, carruseles, LinkedIn, YouTube y WhatsApp de noviembre. «Ya se subió» se guarda solo en este navegador.</p>
+</div>
+
+<div class="velo" id="velo" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTit" id="modal"></div></div>
+
+<script>
+const DOC={
+  reels:['Guion y captions','https://claude.ai/artifact/3KvsUFfmryj45ZPYjnJn9E'],
+  carr:['Captions y artes','https://claude.ai/artifact/GXDtkLD5oB9MRfYGv1sFte'],
+  li:['Texto e imagen','https://claude.ai/artifact/CxtqAEWFu8NJa6sXbMoHNN'],
+  yt:['Guion y descripción','https://claude.ai/artifact/32z93GohxVN2heHQnyMEq5'],
+  wa:['Mensaje listo','https://claude.ai/artifact/GSxLVSG37Au3ia2dTeksgC'],
+  canva:['Portada en Canva','https://www.canva.com/d/pt0C2Z-V2l04GB-'],
+};
+const drive=(id,l='Carpeta en Drive')=>[l,'https://drive.google.com/drive/folders/'+id];
+const CF={c1:'1Lp_8kLt5MdLJp_Mxz4558coEQoCWYG6Y',c2:'1TM22L2pVEeaK5kc7FnYXOsb1pOlKekGQ',c3:'18ABwMqNES-XnIZBWdk_nzRDiUTm2IBol',c4:'1-MbB6q1Od9RV1dgtx_NOqmpMwAtCWbcw',c5:'1l6q6uwCh8mVQLlAuqjMTrsO0C3WMdIip'};
+const WF={4:'1hgefeiYEnP1MszpO1Z9K-3Xjdrh2iHSt',5:'1M8sjJjvsjc6lKX4Dy3_uaOkyAo_6Vob2',9:'1ECSD4f_ju2haKBQU_SB6eIfAdxj9ZSwK',11:'1FISBDX5nNUeCfVF5-qSw8uZHRUY7WShb',12:'1pPArAo8lI2fk1euSUAbVyDmz3XUo4465',13:'1MwwEr_QKyAVwN55pTq7L3Wdc47m3ySDj',16:'1P_49Mdm6QB0kSP-gXrwr1lqUwrPUcibI',17:'1Pztfk8EDDnu_pwixwIuOZHCauG6BxM7J',18:'1EBu6hz0hrK8A071xA6cxfinB25aYUa_P',19:'1g5cHKLYeeawB4wV9-EfuKsrdt9dBgVIa',23:'1UbQSKtMsfGWdHclLSX6PVpvlVb8dxz3D',25:'1aZU8jps_3SnHzgqEvC7GClY-X7Kv9ana',26:'1FUXVL3InZBoSVGHE9XRGSgr_MLSm6KTH',30:'199yqmkd9fs55k1NenEvPSWe-xBPpcikX'};
+
+/* g = filtro · f = formato · ti = título · r = [[red, hora, detalle]] · e = estado (idea · proceso · listo · pub) */
+const P=(g,f,ti,r,o={})=>({g,f,ti,r,e:'listo',...o});
+const SP=(ti)=>P('yt','Short',ti,[['yt','18:00']],{e:'prog',n:'Programado en YouTube: sale solo, aunque la compu esté apagada. Corte del video «¿IVA o ISR?».'});
+const C=(ti,o={})=>P('carr','Carrusel',ti,[['tt','19:00','modo foto'],['ig','13:00']],o);
+const CN=(ti,o={})=>P('carr','Carrusel',ti,[['ig','13:00']],{e:'idea',...o});
+const R=(ti,o={})=>P('reel','Reel',ti,[['tt','19:00'],['ig','13:00']],{l:[DOC.reels],e:'proceso',...o});
+const RH=(ti,o={})=>P('reel','Humor',ti,[['tt','19:00'],['ig','13:00','Trial Reel']],{l:[DOC.reels],e:'proceso',...o});
+const RI=(ti,o={})=>P('reel','Reel',ti,[['ig','13:00']],{l:[DOC.reels],e:'proceso',n:'Corte del video de YouTube.',...o});
+const T=(ti,o={})=>P('reel','Video',ti,[['tt','19:00']],{l:[DOC.reels],e:'proceso',...o});
+const Y=(ti,o={})=>P('yt','Video largo',ti,[['yt','18:00']],{l:[DOC.yt],e:'proceso',...o});
+const S=()=>P('yt','Short','Short de la semana',[['yt','','corte del jueves']],{l:[DOC.yt],e:'proceso',n:'Fragmento de 45 a 60 segundos del video del jueves.'});
+const L=(ti,f,o={})=>P('li',f,ti,[['li','9:00']],{l:[DOC.li],...o});
+const W=(dia,h,f,ti,o={})=>P('wa',f,ti,[['wa',h]],{l:[DOC.wa,...(WF[dia]?[drive(WF[dia],'Texto e imagen en Drive')]:[])],...o});
+const V=(ti)=>P('vivo','Taller',ti,[['vivo','18:00']],{e:'idea',n:'En vivo por Google Meet, gratis.'});
+const G=(ti,h='',o={})=>P('grab','Grabación',ti,[['eq',h]],{e:'idea',...o});
+const A=(lun)=>P('grab','Armar',`Carrusel de noticias del lunes ${lun}`,[['eq','10:00']],{e:'idea',n:'Claude lo arma con lo que publiquen el DOF y el SAT esa semana.',l:[DOC.canva,DOC.carr]});
+
+const DAYS={
+1:{items:[]},
+2:{items:[C('Trámites cuando alguien fallece',{e:'pub',l:[DOC.carr]})]},
+3:{items:[L('Diseñadores: los gastos que sí puedes deducir','Texto'),R('¿Eres diseñador? Gastos que puedes deducir'),G('Reel de diseñadores')]},
+4:{items:[L('IVA e ISR: la diferencia en seis láminas','Documento'),C('Día del Marketing: si trabajas en marketing, esto se deduce',{l:[DOC.carr,drive(CF.c1)]}),
+  W(4,'13:30','Info','El RESICO podría subir su tope a 5 millones'),W(4,'17:00','Invitación','Invitación al taller del jueves 5'),
+  G('Sesión 1: ¿IVA o ISR? y Constancia · reel de humor del Buen Fin')]},
+5:{hito:'taller',items:[L('Si te paga una empresa, ya pagaste una parte','Texto'),
+  W(5,'9:30','Invitación','¡Es hoy! Webinar gratis a las 6 pm',{e:'pub',n:'Lo mandaste a las 9:30, con la liga de registro.'}),
+  RI('El IVA que pagas también cuenta'),W(5,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),
+  Y('¿IVA o ISR? La diferencia explicada fácil',{e:'prog',n:'Programado en YouTube: sale solo a las 18:00.'}),V('Tus impuestos desde cero')]},
+6:{items:[RH('Yo en el Buen Fin contra mi factura'),SP('El IVA que cobras no es tuyo'),G('Sesión 2: Deducciones y Declaración mensual · reels del Buen Fin, fotógrafos y humor de la constancia')]},
+7:{items:[SP('El IVA que pagas también cuenta'),Y('Tu constancia de situación fiscal: cómo sacarla y para qué sirve'),T('Tu cliente no necesita tu constancia: necesita cuatro datos',{n:'Corte del video de YouTube.'})]},
+8:{items:[T('El IVA que cobras no es tuyo',{n:'Corte del video de ¿IVA o ISR?'}),SP('Tres errores con mis impuestos que me costaron un mes')]},
+9:{items:[W(9,'9:00','Tip','¿Qué significa «deducir»?',{n:'Prueba de imagen: este tip va con imagen.'}),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
+  C('Noviembre viene con todo: las fechas que te tocan',{l:[DOC.carr,drive(CF.c2)],n:'Si el Paquete 2027 sale en el DOF antes del viernes 6, este lugar es para él y las fechas pasan al 16.'}),
+  T('Noticias de la semana, un solo tema',{n:'Experimento: un tema contra cuatro.'})]},
+10:{items:[L('Equipo de trabajo en el Buen Fin: factura a tu nombre','Texto'),R('Si compras para tu trabajo en el Buen Fin'),Y('Deducciones de independientes: qué sí y qué no, antes del Buen Fin')]},
+11:{items:[L('Si contratas independientes: lo que necesitas para facturar y retener','Documento'),
+  W(11,'9:30','Info','El Buen Fin y la rifa del SAT',{n:'Versión corregida: explica la rifa (con tarjeta, sin registro, resultados desde el 27).'}),
+  R('¿Eres fotógrafo? Gastos que puedes deducir'),W(11,'17:00','Invitación','Invitación al taller del jueves 12')]},
+12:{hito:'taller',items:[L('Lo que hay que tener listo antes de declarar','Texto'),RI('Ten esto listo antes de declarar'),
+  W(12,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),Y('La declaración mensual paso a paso'),
+  V('Compras del Buen Fin que sí cuentan'),G('Sesión 3: Si cobras por app y Se te pasó · reels de la declaración, el 17, el puente y la e.firma')]},
+13:{hito:'Buen Fin',items:[W(13,'9:00','Recordatorio','Tu declaración vence el martes 17'),A(16),
+  C('Hoy empieza el Buen Fin: dos cosas antes de pagar',{l:[DOC.carr,drive(CF.c3)]}),S()]},
+14:{items:[RH('Cuando te piden la constancia actualizada')]},
+15:{items:[T('Si te salió en ceros, igual se presenta',{n:'Corte del video de la declaración mensual.'})]},
+16:{hito:'descanso',aviso:'Es festivo: el resumen de cuatro temas puede rendir menos por el puente.',items:[
+  W(16,'9:00','Tip','¿Declaración mensual o anual?',{n:'Prueba de imagen: este tip va solo con texto.'}),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
+  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Cuatro temas. Portada en la página 7 de Canva.'}),T('Noticias de la semana, cuatro temas')]},
+17:{hito:'vence el 17',items:[L('Se declara lo cobrado, no lo facturado','Texto'),W(17,'9:00','Recordatorio','Hoy es el último día'),
+  R('Tu declaración mensual en cinco pasos'),Y('Si cobras por app: cómo funcionan tus impuestos')]},
+18:{items:[L('Se te pasó la declaración: qué hacer','Documento'),W(18,'9:30','Info','¿Se te pasó el 17? Respira'),
+  C('Se te pasó el 17: qué hacer hoy',{l:[DOC.carr,drive(CF.c4)]}),W(18,'17:00','Invitación','Invitación al taller del jueves 19'),
+  T('Se te pasó el 17: qué hacer hoy')]},
+19:{hito:'taller',items:[L('Antes de contratar a un independiente, pide esto','Texto'),RI('Se te pasó el 17: haz esto hoy'),
+  W(19,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),Y('Se te pasó la declaración: qué hacer'),V('Tu declaración del mes, paso a paso')]},
+20:{items:[A(23),RH('Se acabó el puente y también el 17'),S(),G('Sesión 4: Aguinaldo y Checklist de diciembre · reels de aguinaldo, gastos médicos, humor y la profesión')]},
+21:{items:[T('Tu e.firma vence cada cuatro años')]},
+22:{items:[T('Una declaración pendiente te puede costar un contrato',{n:'Corte del video de YouTube.'})]},
+23:{items:[W(23,'9:00','Tip','¿Por qué Uber, DiDi o Rappi te descuentan impuestos?',{n:'Prueba de imagen: este tip va con imagen.'}),
+  G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
+  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Un tema. Portada en la página 8 de Canva.'}),T('Noticias de la semana, un solo tema')]},
+24:{items:[L('Aguinaldo 2026: la parte que no paga ISR','Texto'),R('La parte de tu aguinaldo que no paga ISR'),Y('Tu aguinaldo y el ISR: cuánto está exento')]},
+25:{items:[L('Deducciones personales: lo que tiene que estar pagado antes del 31','Documento'),
+  W(25,'9:30','Info','El dentista que pagaste en efectivo no cuenta',{n:'El área fiscal confirma el límite y lo de RESICO antes de mandarlo.'}),
+  C('¿Pagaste al doctor en efectivo?',{l:[DOC.carr,drive(CF.c5)],n:'Antes de publicar, el área fiscal confirma el límite y que en RESICO no aplica.'}),
+  T('Gastos médicos en efectivo: no se deducen')]},
+26:{hito:'taller',items:[L('Cierre de año: revisa tus facturas de ida y de vuelta','Texto'),
+  W(26,'9:00','Invitación','Invitación al taller de hoy',{n:'Prueba de horario: sale en la mañana en vez del miércoles.'}),
+  RI('Si no lo pagas antes del 31, no lo deduces'),W(26,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),
+  Y('El checklist de diciembre para independientes'),V('Cierra el año en orden')]},
+27:{items:[A(30),RH('Mi lista de pendientes de diciembre'),S(),G('Sesión 5: los dos primeros videos de diciembre')]},
+28:{items:[T('La siguiente profesión de la serie',{e:'idea',n:'Solo si la serie de profesiones gana el 18.'})]},
+29:{items:[T('Revisa tus doce declaraciones del año',{n:'Corte del video del checklist.'})]},
+30:{hito:'cierre',aviso:'Cierra el experimento de noticias: dos resúmenes de un tema contra dos de cuatro.',items:[
+  W(30,'9:00','Tip','¿e.firma o contraseña?',{n:'Prueba de imagen: este tip va solo con texto.'}),L('Diciembre en tres fechas: 17, antes del 20 y 31','Texto'),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
+  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Cuatro temas. Portada en la página 9 de Canva.'}),T('Noticias de la semana, cuatro temas')]},
+};
+
+const NOM={tt:'TikTok',ig:'Instagram',yt:'YouTube',li:'LinkedIn',wa:'WhatsApp',vivo:'En vivo',eq:'Equipo'};
+const DIAS='domingo lunes martes miércoles jueves viernes sábado'.split(' ');
+/* WhatsApp: del 5 en adelante ya está programado y sale solo desde el Chrome de Mich */
+for(const d in DAYS)if(+d>=5)DAYS[d].items.forEach(p=>{if(p.g==='wa'&&p.e!=='pub'){p.e='prog';p.n=(p.n?p.n+' ':'')+'Programado: sale solo con WhatsApp Web abierto en Chrome. Si a esa hora la compu está apagada, sale en cuanto la prendas (revisa cada hora).'}});
+/* LinkedIn: 3, 4 y 5 publicados; del 10 en adelante programados en LinkedIn, salen solos */
+for(const d in DAYS)DAYS[d].items.forEach(p=>{if(p.g!=='li')return;if(+d<=5){p.e='pub';}else{p.e='prog';p.n=(p.n?p.n+' ':'')+'Programado en LinkedIn: sale solo, aunque la compu esté apagada.'}});
+const EST={idea:['por armar','e-idea',''],proceso:['por grabar','e-proceso','proceso'],listo:['listo','e-listo','listo'],pub:['publicado','e-pub','pub'],prog:['programado · sale solo','e-prog','prog']};
+function hoyCDMX(){try{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-').map(Number);
+  if(p[0]===2026&&p[1]===11)return p[2];return (p[0]>2026||(p[0]===2026&&p[1]>11))?99:0}catch(e){return 0}}
+const HOY=hoyCDMX();
+const min=h=>{if(!h)return 2000;if(h==='mañana')return 600;const[a,b]=h.split(':').map(Number);return a*60+(b||0)};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let filtro='todo',abierto=0;
+let hechos={};try{hechos=JSON.parse(localStorage.getItem('cal-nov-hechos')||'{}')}catch(e){}
+const guardar=()=>{try{localStorage.setItem('cal-nov-hechos',JSON.stringify(hechos))}catch(e){}};
+const pasa=p=>filtro==='todo'||p.g===filtro;
+const horaDe=p=>{const hs=p.r.map(x=>x[1]).filter(Boolean).sort((a,b)=>min(a)-min(b));return hs[0]||''};
+function badge(p){const rs=p.r.map(x=>x[0]);
+  if(rs.includes('tt')&&rs.includes('ig'))return['TT+IG','b'];
+  const m={tt:['TT','tt'],ig:['IG','ig'],yt:['YT','yt'],li:['IN','li'],wa:['WA','wa'],vivo:['VIVO','vivo'],eq:[p.f==='Armar'?'ARMAR':'GRABAR','eq']};return m[rs[0]]}
+
+document.getElementById('hoyTxt').textContent=HOY>=1&&HOY<=30?`${DIAS[(HOY-1)%7]} ${HOY} de noviembre`:'—';
+
+function totales(){
+  const all=Object.values(DAYS).flatMap(d=>d.items);
+  const pub=all.filter(p=>p.g!=='grab'&&p.g!=='vivo');
+  const n=k=>pub.filter(p=>p.e===k).length;
+  const k=[['Piezas del mes',pub.length,`${all.filter(p=>p.g==='carr').length} carruseles · ${all.filter(p=>p.g==='reel').length} reels y TikToks`],
+    ['YouTube',all.filter(p=>p.g==='yt').length,`${all.filter(p=>p.f==='Video largo').length} largos · ${all.filter(p=>p.f==='Short').length} Shorts`],
+    ['LinkedIn',all.filter(p=>p.g==='li').length,'martes a jueves, 9:00'],
+    ['WhatsApp',all.filter(p=>p.g==='wa').length,`mensajes · ${all.filter(p=>p.g==='vivo').length} talleres en vivo`],
+    ['Listas o programadas',n('listo')+n('prog'),`${n('prog')} programadas en WhatsApp · ${n('proceso')} por grabar`]];
+  document.getElementById('totales').innerHTML=k.map(([l,v,d])=>`<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div><div class="delta">${d}</div></div>`).join('');
+}
+
+function pintar(){
+  let h='';const lead=6; // el 1 de noviembre de 2026 es domingo; la semana empieza en lunes
+  for(let i=0;i<lead;i++)h+=`<div class="cell off" aria-hidden="true"><div class="dnum">${26+i}<span class="mesc"> oct</span></div></div>`;
+  const choques=[];
+  for(let d=1;d<=30;d++){
+    const dia=DAYS[d]||{items:[]};
+    const its=dia.items.filter(pasa).slice().sort((a,b)=>min(horaDe(a))-min(horaDe(b)));
+    const cl=['cell',d===HOY?'hoy':'',d<HOY?'pasado':''].join(' ');
+    h+=`<div class="${cl}" data-d="${d}" tabindex="0" role="button" aria-label="${DIAS[(d-1)%7]} ${d}: ${its.length} posts">
+      <div class="dnum"><span class="dw">${DIAS[(d-1)%7].slice(0,3)}</span>${d}${d===HOY?'<span class="hoytag">hoy</span>':''}${dia.hito?`<span class="hito">${esc(dia.hito)}</span>`:''}</div>
+      ${(its.length>4?its.slice(0,3):its).map(p=>{const[b,c]=badge(p);return `<button class="chip ${EST[p.e][1]}" data-d="${d}" title="${esc(p.f+' · '+p.ti)}"><span class="rd ${c}">${b}</span><span class="t1">${esc(p.ti)}</span>${p.e==='prog'?'<span class="reloj" title="Programado">🕒</span>':''}</button>`}).join('')}
+      ${its.length>4?`<button class="mas" data-d="${d}">+${its.length-3} más</button>`:''}
+      <span class="dots">${its.map(p=>`<i class="rd ${badge(p)[1]}"></i>`).join('')}</span>
+    </div>`;
+    // choques: dos posts el mismo día en la misma red
+    const cuenta={};dia.items.forEach(p=>p.r.forEach(([r])=>{if(r==='tt'||r==='ig')(cuenta[r]=cuenta[r]||[]).push(p)}));
+    for(const r in cuenta)if(cuenta[r].length>1)choques.push(`<b>${String(d).padStart(2,'0')}/11 · ${NOM[r]}</b>: ${cuenta[r].length} posts — ${cuenta[r].map(p=>'['+esc(p.f)+'] '+esc(p.ti)).join(' / ')}`);
+  }
+  for(let i=0;i<6;i++)h+=`<div class="cell off" aria-hidden="true"><div class="dnum">${i+1}<span class="mesc"> dic</span></div></div>`;
+  document.getElementById('calGrid').innerHTML=h;
+  document.getElementById('choques').innerHTML=choques.length&&filtro==='todo'?`<div class="choque">⚠️ <b>${new Set(choques.map(c=>c.slice(3,8))).size} día(s) con más de un post en la misma red este mes.</b><br>${choques.join('<br>')}<br><span style="opacity:.85">Dos posts el mismo día en la misma red se canibalizan: el segundo mide mal porque tu audiencia ya vio el primero.</span></div>`:'';
+}
+
+function modal(){
+  const velo=document.getElementById('velo'),m=document.getElementById('modal');
+  if(!abierto){velo.hidden=true;return}
+  const d=abierto,dia=DAYS[d]||{items:[]};
+  const its=dia.items.filter(pasa).slice().sort((a,b)=>min(horaDe(a))-min(horaDe(b)));
+  const sub=[d===HOY?'hoy':(d<HOY?'ya pasó':''),`${dia.items.length} ${dia.items.length===1?'pieza':'piezas'}`,dia.hito||''].filter(Boolean).join(' · ');
+  const posts=its.map(p=>{const key=`${d}-${dia.items.indexOf(p)}`,ok=!!hechos[key],[el,ec,ek]=EST[p.e];
+    const plats=p.r.slice().sort((a,b)=>min(a[1])-min(b[1])).map(([r,h,x])=>`<span class="plat ${r}">${NOM[r]==='Equipo'?(p.f==='Armar'?'Armar':'Grabar'):NOM[r]}${x&&x!=='corte del jueves'?' · '+x:''} · ${h||'sin hora fija'}</span>`).join('');
+    return `<div class="post ${ec} ${ok?'ok':''}"><div class="plats">${plats}<span class="est ${ek}">${el}</span></div>
+      <p class="pt">${esc(p.ti)}</p><p class="pn">${esc(p.f)}${p.n?' · '+esc(p.n):''}</p>
+      ${p.l?`<div class="links">${p.l.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('')}</div>`:''}
+      ${p.e!=='pub'&&p.e!=='prog'&&p.g!=='vivo'?`<label class="hecho"><input type="checkbox" id="ok-${key}" data-k="${key}" ${ok?'checked':''}>${p.g==='grab'?'Ya se hizo':'Ya se subió'}</label>`:''}</div>`}).join('');
+  m.innerHTML=`<div class="mh"><div><h2 id="mTit">${DIAS[(d-1)%7][0].toUpperCase()+DIAS[(d-1)%7].slice(1)} ${d} de noviembre</h2><div class="sub">${esc(sub)}</div></div>
+      <div class="calnav"><button id="mPrev" aria-label="Día anterior" ${d===1?'disabled':''}>‹</button><button id="mNext" aria-label="Día siguiente" ${d===30?'disabled':''}>›</button><button id="mX" aria-label="Cerrar">✕</button></div></div>
+    <div class="mb">${dia.aviso&&filtro==='todo'?`<div class="callout">${esc(dia.aviso)}</div>`:''}
+      ${its.length?posts:`<p class="vacio">${dia.items.length?'Nada de este tipo este día. Cambia el filtro a «Todas» para ver el resto.':'Nada programado este día.'}</p>`}</div>`;
+  velo.hidden=false;
+  document.getElementById('mPrev').onclick=()=>abrir(d-1);document.getElementById('mNext').onclick=()=>abrir(d+1);document.getElementById('mX').onclick=cerrar;
+  m.querySelectorAll('input[data-k]').forEach(cb=>cb.onchange=()=>{if(cb.checked)hechos[cb.dataset.k]=1;else delete hechos[cb.dataset.k];guardar();cb.closest('.post').classList.toggle('ok',cb.checked)});
+  document.getElementById('mX').focus({preventScroll:true});
+}
+function setHash(h){try{history.replaceState(null,'',h||location.pathname+location.search)}catch(e){}}
+function abrir(d){if(d<1||d>30)return;abierto=d;modal();setHash('#dia-'+d)}
+function cerrar(){const d=abierto;abierto=0;modal();setHash('');const c=document.querySelector(`.cell[data-d="${d}"]`);if(c)c.focus({preventScroll:true})}
+
+const grid=document.getElementById('calGrid');
+grid.addEventListener('click',e=>{const c=e.target.closest('[data-d]');if(c)abrir(+c.dataset.d)});
+grid.addEventListener('keydown',e=>{const c=e.target.closest('.cell[data-d]');if(c&&e.target===c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();abrir(+c.dataset.d)}});
+document.getElementById('velo').addEventListener('click',e=>{if(e.target.id==='velo')cerrar()});
+document.addEventListener('keydown',e=>{if(!abierto)return;if(e.key==='Escape')cerrar();else if(e.key==='ArrowRight'&&!e.target.matches('input'))abrir(abierto+1);else if(e.key==='ArrowLeft'&&!e.target.matches('input'))abrir(abierto-1)});
+document.querySelectorAll('#calSeg button').forEach(b=>b.onclick=()=>{filtro=b.dataset.f;document.querySelectorAll('#calSeg button').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});pintar();if(abierto)modal()});
+document.getElementById('btnHoy').onclick=()=>{if(HOY>=1&&HOY<=30)abrir(HOY);else document.getElementById('calWrap').scrollIntoView({behavior:'smooth'})};
+function desdeHash(){const m=/^#dia-(\d{1,2})$/.exec(location.hash);abierto=(m&&+m[1]>=1&&+m[1]<=30)?+m[1]:0}
+window.addEventListener('hashchange',()=>{desdeHash();modal()});
+desdeHash();totales();pintar();modal();
+</script>
+
+</body>
+</html>

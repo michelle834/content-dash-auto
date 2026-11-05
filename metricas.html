@@ -319,8 +319,9 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
       <div>
         <div class="flabel">Periodo</div>
         <div class="mseg" id="m_range">
+          <button data-range="month" class="on">Este mes</button>
           <button data-range="7">7 días</button>
-          <button data-range="30" class="on">30 días</button>
+          <button data-range="30">30 días</button>
           <button data-range="90">90 días</button>
           <button data-range="all">Todo</button>
           <button data-range="custom">Rango…</button>
@@ -341,6 +342,11 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     <div class="section-title">🎯 KPIs del mes <span class="muted" id="m_kpimes_mes" style="font-weight:500;font-size:12px"></span></div>
     <div class="muted" style="margin:0 2px 6px;font-size:11.5px">Mes calendario en curso, contra las metas del mes. No cambia con el filtro de periodo ni de red.</div>
     <div id="m_kpimes"></div>
+
+    <!-- SECCIÓN 1c · POSICIÓN CONTRA EL MERCADO -->
+    <div class="section-title">🏁 Contra el mercado</div>
+    <div class="muted" style="margin:0 2px 6px;font-size:11.5px">Dos métricas que no dependen del tamaño de la comunidad. heru se recalcula todos los días con sus datos; la competencia, con la última lectura de sus perfiles públicos.</div>
+    <div id="m_mercado"></div>
 
     <!-- SECCIÓN 2 · KPIs + SCORE + DÍA + BENCHMARK -->
     <div class="section-title">Resumen de la cuenta <span class="muted" id="m_periodo" style="font-weight:500;font-size:12px"></span></div>
@@ -1084,7 +1090,7 @@ function buildDailyIG(){
 }
 
 /* ================= MÉTRICAS (página principal) ================= */
-var MF={net:"both",mode:"range",days:30,from:null,to:null,day:null,perf:"day",heatNet:"tt"};
+var MF={net:"both",mode:"range",days:"month",from:null,to:null,day:null,perf:"day",heatNet:"tt"};
 const NET={tt:{name:"TikTok",emoji:"🎵",cls:"tt",color:"#1790EC",color2:"#11bafa"},ig:{name:"Instagram",emoji:"📸",cls:"ig",color:"#dd2a7b",color2:"#8134af"},li:{name:"LinkedIn",emoji:"💼",cls:"li",color:"#0a66c2",color2:"#0077b5"},yt:{name:"YouTube",emoji:"▶️",cls:"yt",color:"#ff0000",color2:"#ff6b6b"}};
 
 function mDay(s){ return String(s||"").slice(0,10); }
@@ -1103,6 +1109,10 @@ function mWindow(){
   if(MF.mode==="day"){ var d=MF.day||mx; return {from:d,to:d,day:true}; }
   if(MF.mode==="custom"){ return {from:MF.from||mMinus(mx,29),to:MF.to||mx,day:false}; }
   if(MF.days==="all"){ return {from:"0000-00-00",to:mx,day:false}; }
+  /* "Este mes": del día 1 del mes en curso (hora CDMX) al último día con datos.
+     Las metas son mensuales, así que este es el periodo por defecto. */
+  if(MF.days==="month"){ var hoy=new Date(Date.now()-6*36e5).toISOString().slice(0,10), ini=hoy.slice(0,7)+"-01";
+    return {from:ini,to:(mx>=ini?mx:hoy),day:false}; }
   return {from:mMinus(mx,MF.days-1),to:mx,day:false};
 }
 function inW(dstr,w){ var d=mDay(dstr); return d>=w.from && d<=w.to; }
@@ -1223,6 +1233,105 @@ function mRenderKpiMes(){
     </div>
     <div class="muted" style="font-size:11.5px;margin:8px 2px 0">Cuentan ${dias} de ${diasMes} días: hasta el último día que TikTok e Instagram ya reportaron. La rayita de cada barra marca dónde deberías ir hoy; verde = vas al ritmo, ámbar = arriba del 85% del ritmo, rojo = abajo.
     Alcance = vistas de TikTok, Instagram y YouTube más impresiones de LinkedIn, igual que el KR. Engagement ponderado = interacciones de las piezas del mes de las cuatro redes ÷ su alcance sumado (TikTok e Instagram sobre personas alcanzadas, LinkedIn sobre impresiones, YouTube sobre vistas).</div>`;
+}
+
+/* ---------- CONTRA EL MERCADO ----------
+   Benchmark de perfiles públicos. Se actualiza cuando se vuelve a leer a la competencia:
+   cambiar "fecha" y los valores. heru NO va aquí: se calcula en vivo.
+   ig = engagement por seguidor: (me gusta + comentarios) de la pieza mediana de las últimas 12 ÷ seguidores × 100.
+   tt = vistas por cada mil seguidores: vistas de la pieza mediana de los últimos 12 videos ÷ seguidores × 1000.
+   ult = fecha de la última pieza publicada al momento de la lectura (para saber si la cuenta está activa). */
+const __BENCH={
+  fecha:"2026-10-29", activaDias:90,
+  ig:{meta:3, cuentas:[
+    {n:"Taxfi",v:0.616},{n:"La Hora SAT",v:0.445},{n:"Mar Fiscal",v:0.350},{n:"Cooltura Fiscal",v:0.307},
+    {n:"Contador Alastra",v:0.295},{n:"Konta",v:0.184,com:true},{n:"Fixat",v:0.131,com:true},{n:"Guille Goal",v:0.125},
+    {n:"TaxDown MX",v:0.090,com:true},{n:"SAT México",v:0.054},{n:"TurboTax",v:0.032}]},
+  tt:{meta:1, cuentas:[
+    {n:"Konta",v:27684,com:true,ult:"2025-12-13"},{n:"Fixat",v:1985,com:true,ult:"2026-02-24"},
+    {n:"Cooltura Fiscal",v:1582,ult:"2026-09-30"},{n:"La Hora SAT",v:1460,ult:"2026-08-09"},
+    {n:"Contador Alastra",v:228,ult:"2026-10-28"},{n:"SAT México",v:200,ult:"2026-10-27"},
+    {n:"Mar Fiscal",v:127,ult:"2026-10-21"},{n:"Taxfi",v:100,ult:"2026-10-23"},
+    {n:"Guille Goal",v:36,ult:"2026-10-29"},{n:"TaxDown MX",v:2,com:true,ult:"2026-10-29"}]}
+};
+function __medN(a){ const s=a.filter(x=>isFinite(x)).sort((x,y)=>x-y); if(!s.length) return 0; const k=s.length>>1; return s.length%2?s[k]:(s[k-1]+s[k])/2; }
+/* Valor de heru en un día d: las últimas 12 piezas publicadas hasta ese día, con los conteos de hoy. */
+function __igPorSeguidor(d){
+  const all=(DATA.ig_media||[]).filter(v=>!/^collab/i.test(String(v.media_id||''))&&!/STORY/i.test(String(v.media_type||'')));
+  const P=all.filter(v=>mPostDate(v.timestamp,true)<=d).sort((a,b)=>String(b.timestamp).localeCompare(String(a.timestamp))).slice(0,12);
+  const hoyF=num((DATA.ig_totals||{}).followers_count);
+  let nuevos=0; (DATA.ig_series||[]).forEach(r=>{ if(mDay(r.date)>d) nuevos+=num(r.follower_count); });
+  const F=Math.max(hoyF-nuevos,1);
+  let publico=true;
+  const vals=P.map(v=>{ const tl=v.media_total_like_count, tc=v.media_total_comments_count;
+    if(tl==null||tl===''){ publico=false; return num(v.media_like_count)+num(v.media_comments_count); }
+    return num(tl)+num(tc); });
+  return {v:P.length?__medN(vals)/F*100:null, n:P.length, F, publico};
+}
+function __ttPorMil(d){
+  const P=(DATA.vids||[]).filter(v=>!/^collab/i.test(String(v.video_id||''))&&mPostDate(v.video_create_datetime,false)<=d)
+    .sort((a,b)=>String(b.video_create_datetime).localeCompare(String(a.video_create_datetime))).slice(0,12);
+  const S=(DATA.series||[]).filter(r=>num(r.total_followers_count)>0&&mDay(r.date)<=d).sort((a,b)=>mDay(a.date).localeCompare(mDay(b.date)));
+  const F=S.length?num(S[S.length-1].total_followers_count):num((DATA.totals||{}).total_followers_count);
+  return {v:(P.length&&F)?__medN(P.map(v=>num(v.video_views_count)))/F*1000:null, n:P.length, F};
+}
+function __posicion(val,cuentas){ const arriba=cuentas.filter(c=>c.v>val).length; return arriba+1; }
+function __sparkMercado(serie,umbral,fmt){
+  const pts=serie.filter(p=>p.v!=null); if(pts.length<2) return '';
+  const W=300,H=64,pad=4, vals=pts.map(p=>p.v).concat(umbral!=null?[umbral]:[]);
+  const lo=Math.min(...vals)*0.92, hi=Math.max(...vals)*1.06||1;
+  const X=i=>pad+i*(W-2*pad)/(pts.length-1), Y=v=>H-pad-(v-lo)/(hi-lo||1)*(H-2*pad);
+  const path=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
+  const meta=umbral!=null?`<line x1="${pad}" x2="${W-pad}" y1="${Y(umbral).toFixed(1)}" y2="${Y(umbral).toFixed(1)}" stroke="var(--pos)" stroke-dasharray="4 4" stroke-width="1.2"/>`:'';
+  const u=pts[pts.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="Últimos ${pts.length} días">${meta}<path d="${path}" fill="none" stroke="var(--brand)" stroke-width="2"/><circle cx="${X(pts.length-1).toFixed(1)}" cy="${Y(u.v).toFixed(1)}" r="3.5" fill="var(--brand)"/></svg>
+    <div class="muted" style="font-size:11px;display:flex;justify-content:space-between"><span>${pts[0].d.slice(5)}: ${fmt(pts[0].v)}</span><span>hoy: ${fmt(u.v)}</span></div>`;
+}
+function __tablaMercado(lista,heruV,fmt,marcaActiva){
+  const filas=lista.concat([{n:"heru",v:heruV,heru:true}]).filter(c=>c.v!=null).sort((a,b)=>b.v-a.v);
+  const mx=filas[0]?filas[0].v:1;
+  return filas.map((c,i)=>{ const w=Math.max(c.v/mx*100,1.5), inact=marcaActiva&&c.inactiva;
+    return `<div style="display:grid;grid-template-columns:22px 128px minmax(0,1fr) 64px;gap:8px;align-items:center;font-size:12px;padding:2px 0;${c.heru?'font-weight:800':''};${inact?'opacity:.5':''}">
+      <span class="muted">${i+1}</span><span>${esc(c.n)}${c.com?' <span class="muted" style="font-size:10.5px">comp.</span>':''}${inact?' <span class="muted" style="font-size:10.5px">inactiva</span>':''}</span>
+      <span style="height:8px;border-radius:4px;background:var(--line);overflow:hidden"><span style="display:block;height:100%;width:${w}%;background:${c.heru?'var(--brand)':'#9fb3c8'}"></span></span>
+      <span style="text-align:right">${fmt(c.v)}</span></div>`; }).join('');
+}
+function mRenderMercado(){
+  const box=document.getElementById("m_mercado"); if(!box) return;
+  const hoy=String(mLatestDataDay()||__hoyCDMX()).slice(0,10);
+  const dias=[]; for(let i=29;i>=0;i--) dias.push(mMinus(hoy,i));
+  const fIG=v=>v==null?'—':v.toFixed(3).replace('.',',')+'%';
+  const fTT=v=>v==null?'—':pf(v);
+  /* Instagram */
+  const B1=__BENCH.ig, igS=dias.map(d=>({d,v:__igPorSeguidor(d).v})), ig=__igPorSeguidor(hoy);
+  const igPos=ig.v==null?null:__posicion(ig.v,B1.cuentas), igTot=B1.cuentas.length+1;
+  const com1=B1.cuentas.filter(c=>c.com), igPosCom=ig.v==null?null:__posicion(ig.v,com1);
+  const orden1=[...B1.cuentas].sort((a,b)=>b.v-a.v), umbral1=orden1[B1.meta-1]?orden1[B1.meta-1].v:null;
+  const igOk=igPos!=null&&igPos<=B1.meta;
+  const falta1=(!igOk&&umbral1!=null&&ig.v!=null)?Math.ceil(umbral1/100*ig.F-ig.v/100*ig.F)+1:0;
+  /* TikTok */
+  const B2=__BENCH.tt, lim=mMinus(__BENCH.fecha,B2&&__BENCH.activaDias?__BENCH.activaDias:90);
+  const ctas2=B2.cuentas.map(c=>Object.assign({},c,{inactiva:!!(c.ult&&c.ult<lim)}));
+  const act2=ctas2.filter(c=>!c.inactiva);
+  const ttS=dias.map(d=>({d,v:__ttPorMil(d).v})), tt=__ttPorMil(hoy);
+  const ttPos=tt.v==null?null:__posicion(tt.v,ctas2), ttPosAct=tt.v==null?null:__posicion(tt.v,act2);
+  const orden2=[...act2].sort((a,b)=>b.v-a.v), umbral2=orden2[B2.meta-1]?orden2[B2.meta-1].v:null;
+  const ttOk=ttPosAct!=null&&ttPosAct<=B2.meta;
+  const col=ok=>ok?'var(--pos)':'var(--amber)';
+  const tarjeta=(titulo,valor,lineas,spark,tabla)=>`<div class="kpi"><div class="label">${titulo}</div><div class="val">${valor}</div>${lineas}
+    <div style="margin-top:10px">${spark}</div>
+    <details style="margin-top:8px"><summary class="muted" style="font-size:12px;cursor:pointer">Ver el ranking</summary><div style="margin-top:6px">${tabla}</div></details></div>`;
+  const l1=`<div class="delta" style="color:${col(igOk)}">${igPos?igPos+'º de '+igTot:'—'} · ${igPosCom?igPosCom+'º de '+(com1.length+1)+' comerciales':''}</div>
+    <div class="delta flat">Meta: ${B1.meta}º lugar (${fIG(umbral1)}). ${igOk?'Ya estás en la meta.':(falta1?`Faltan ~${pf(falta1)} interacciones en la pieza mediana.`:'')}</div>
+    ${ig.publico?'':'<div class="delta flat" style="color:var(--amber)">Aprox.: la hoja trae me gusta orgánicos, no el conteo público que se ve en la app. Con el público sube como 15%.</div>'}`;
+  const l2=`<div class="delta" style="color:${col(ttOk)}">${ttPos?ttPos+'º de '+(ctas2.length+1):'—'} · ${ttPosAct?ttPosAct+'º de '+(act2.length+1)+' activas':''}</div>
+    <div class="delta flat">Meta: ${B2.meta}º lugar entre cuentas activas${umbral2!=null?' ('+fTT(umbral2)+')':''}. ${ttOk?'Ya estás en la meta: toca sostenerla.':''}</div>
+    <div class="delta flat">Mediana de ${tt.n} videos sobre ${pf(tt.F)} seguidores.</div>`;
+  box.innerHTML=`<div class="twocol" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px">
+    ${tarjeta('📸 Instagram · engagement por seguidor',fIG(ig.v),l1,__sparkMercado(igS,umbral1,fIG),__tablaMercado(B1.cuentas,ig.v,fIG,false))}
+    ${tarjeta('🎵 TikTok · vistas por cada mil seguidores',fTT(tt.v),l2,__sparkMercado(ttS,umbral2,fTT),__tablaMercado(ctas2,tt.v,fTT,true))}
+  </div>
+  <div class="muted" style="font-size:11.5px;margin:8px 2px 0">heru se recalcula cada día con las últimas 12 piezas publicadas hasta ese día; la línea muestra los últimos 30 días y la punteada verde es la marca de la meta. La competencia es la lectura de sus perfiles públicos del ${__BENCH.fecha}. Activa = publicó en los ${__BENCH.activaDias} días anteriores a esa lectura. Instagram: (me gusta + comentarios) de la pieza mediana ÷ seguidores. TikTok: vistas de la pieza mediana ÷ seguidores × 1,000.</div>`;
 }
 
 /* --- por-red: posts/series filtrados + KPIs --- */
@@ -1919,7 +2028,7 @@ function buildMetrics(){
   const nets=MF.net==="both"?["tt","ig","li","yt"]:[MF.net];
   const pe=document.getElementById("m_periodo");
   if(pe) pe.textContent = w.day?("· "+w.from):("· "+w.from+" → "+w.to);
-  mRenderKpiMes(); mRenderKPIs(nets,w); mRenderScore(nets,w); mRenderDay(nets,w); mRenderBench();
+  mRenderKpiMes(); mRenderMercado(); mRenderKPIs(nets,w); mRenderScore(nets,w); mRenderDay(nets,w); mRenderBench();
   mRenderEarly(nets); mRenderCharts(nets,w); mRenderERMonth(nets); mRenderBest(nets,w); mRenderOverAvg(nets,w); mRenderLI(nets,w); mRenderYT(nets,w); mRenderPillars(nets,w);
 }
 function mSetPerf(p){ MF.perf=p; buildMetrics(); }
@@ -4132,7 +4241,7 @@ VIEWS.forEach(v=>{const tb=document.getElementById("tab-"+v); if(tb) tb.addEvent
     const r=b.dataset.range;
     if(r==="custom"){ MF.mode="custom"; cw.classList.remove("hidden"); dw.classList.add("hidden"); }
     else if(r==="day"){ MF.mode="day"; dw.classList.remove("hidden"); cw.classList.add("hidden"); if(!MF.day){MF.day=mLatestDataDay();} const di=document.getElementById("m_day1"); if(di)di.value=MF.day; }
-    else { MF.mode="range"; MF.days=(r==="all"?"all":+r); cw.classList.add("hidden"); dw.classList.add("hidden"); }
+    else { MF.mode="range"; MF.days=(r==="all"||r==="month"?r:+r); cw.classList.add("hidden"); dw.classList.add("hidden"); }
     if(SERVER_DATA) buildMetrics();
   });
   const mf=document.getElementById("m_from"), mt=document.getElementById("m_to"), md=document.getElementById("m_day1");

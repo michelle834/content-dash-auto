@@ -14,7 +14,7 @@
   --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e6eaf2;
   --brand:#1790EC; --brand-soft:#dff4ff; --pink:#fe2c55; --cyan:#11bafa;
   --ig1:#f58529; --ig2:#dd2a7b; --ig3:#8134af; --pos:#16a34a; --amber:#d97706; --gray:#94a3b8;
-  --li:#0a66c2; --prog:#0d9488; --yt:#ff0000; --wa:#25d366;
+  --li:#0a66c2; --fb:#1877f2; --prog:#0d9488; --yt:#ff0000; --wa:#25d366;
   --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
   --sys:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --tit:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -90,7 +90,7 @@ h1{font-size:20px;margin:0}
 .ctop{display:flex;align-items:center;gap:4px;margin-bottom:2px}
 .rd{font-size:9px;font-weight:800;letter-spacing:.04em;color:#fff;border-radius:3px;padding:1px 4px;flex:0 0 auto}
 .rd.tt{background:var(--pink)}.rd.ig{background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))}.rd.b{background:var(--brand)}
-.rd.yt{background:var(--yt)}.rd.li{background:var(--li)}.rd.wa{background:var(--wa)}.rd.vivo{background:var(--ig3)}.rd.eq{background:var(--muted)}
+.rd.yt{background:var(--yt)}.rd.li{background:var(--li)}.rd.fb{background:var(--fb)}.rd.wa{background:var(--wa)}.rd.vivo{background:var(--ig3)}.rd.eq{background:var(--muted)}
 .chip .hr{font-size:10px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
 .chip .ttl{font-weight:650;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .callegend{display:flex;gap:8px 14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--muted);align-items:center}
@@ -154,7 +154,7 @@ details.pv[open]>summary{margin-bottom:10px}
 .post.ok{opacity:.55}.post.ok .pt{text-decoration:line-through}
 .plats{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
 .plat{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap;color:#fff}
-.plat.tt{background:#111}.plat.ig{background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))}.plat.yt{background:var(--yt)}.plat.li{background:var(--li)}.plat.wa{background:var(--wa)}.plat.vivo{background:var(--ig3)}.plat.eq{background:var(--muted)}
+.plat.tt{background:#111}.plat.ig{background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))}.plat.yt{background:var(--yt)}.plat.li{background:var(--li)}.plat.fb{background:var(--fb)}.plat.wa{background:var(--wa)}.plat.vivo{background:var(--ig3)}.plat.eq{background:var(--muted)}
 .est{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;color:var(--muted)}
 .est.listo{color:var(--pos)}.est.proceso{color:var(--amber)}.est.pub{color:var(--brand)}.est.prog{color:var(--prog)}
 .pt{font-size:14.5px;font-weight:700;margin:0 0 3px;line-height:1.3}
@@ -215,7 +215,7 @@ details.pv[open]>summary{margin-bottom:10px}
       <span><span class="swatch" style="background:linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3))"></span>Instagram</span>
       <span><span class="swatch" style="background:var(--brand)"></span>Las dos</span>
       <span><span class="swatch" style="background:var(--yt)"></span>YouTube</span>
-      <span><span class="swatch" style="background:var(--li)"></span>LinkedIn</span>
+      <span><span class="swatch" style="background:var(--li)"></span>LinkedIn</span>       <span><span class="swatch" style="background:var(--fb)"></span>Facebook</span>
       <span><span class="swatch" style="background:var(--wa)"></span>WhatsApp</span>
       <span><span class="swatch" style="background:var(--ig3)"></span>Taller</span>
       <span class="der">El borde izquierdo indica su estado: <b>gris</b> por armar · <b>ámbar</b> por grabar · <b>verde</b> listo · <b>verde azulado</b> programado, sale solo · <b>azul</b> publicado</span>
@@ -264,7 +264,8 @@ const L=(ti,f,o={})=>P('li',f,ti,[['li','9:00']],{l:[DOC.li],...o});
 const W=(dia,h,f,ti,o={})=>P('wa',f,ti,[['wa',h]],{l:[DOC.wa,...(WF[dia]?[drive(WF[dia],'Texto e imagen en Drive')]:[])],...o});
 const V=(ti)=>P('vivo','Taller',ti,[['vivo','18:00']],{e:'idea',n:'En vivo por Google Meet, gratis.'});
 const G=(ti,h='',o={})=>P('grab','Grabación',ti,[['eq',h]],{e:'idea',...o});
-const A=(lun)=>P('grab','Armar',`Carrusel de noticias del lunes ${lun}`,[['eq','10:00']],{e:'idea',n:'Claude lo arma con lo que publiquen el DOF y el SAT esa semana.',l:[DOC.canva,DOC.carr]});
+const A=(vie,o={})=>P('grab','Armar',`Carrusel de noticias del viernes ${vie}`,[['eq','tarde']],{e:'idea',n:'Claude lo arma el jueves en la tarde (o el viernes temprano) con lo que publiquen el DOF, el SAT y el Congreso esa semana, y te pasa láminas y captions.',l:[DOC.carr],...o});
+const N=(rango,o={})=>P('carr','Carrusel',`Noticias fiscales de la semana · ${rango}`,[['ig',''],['tt','','modo foto'],['fb',''],['li','','documento']],{e:'idea',l:[DOC.carr],n:'Resumen semanal: lo publicas tú en las cuatro redes. Portada: la tuya, solo cambia la fecha.',...o});
 
 const DAYS={
 1:{items:[]},
@@ -275,9 +276,9 @@ const DAYS={
   G('Sesión 1: ¿IVA o ISR? y Constancia · reel de humor del Buen Fin')]},
 5:{hito:'taller',items:[L('Si te paga una empresa, ya pagaste una parte','Texto'),
   W(5,'9:30','Invitación','¡Es hoy! Webinar gratis a las 6 pm',{e:'pub',n:'Lo mandaste a las 9:30, con la liga de registro.'}),
-  RI('El IVA que pagas también cuenta'),W(5,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),
+  RI('El IVA que pagas también cuenta'),RH('Yo en el Buen Fin contra mi factura',{e:'pub',r:[['ig',''],['tt','']],n:'Lo subiste el jueves 5 a Instagram y TikTok.'}),A(6,{e:'listo',n:'Listo: portada con la fecha del 31 de octubre al 6 de noviembre, tres noticias y el cierre.'}),W(5,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),
   Y('¿IVA o ISR? La diferencia explicada fácil',{e:'prog',n:'Programado en YouTube: sale solo a las 18:00.'}),V('Tus impuestos desde cero')]},
-6:{items:[RH('Yo en el Buen Fin contra mi factura'),SP('El IVA que cobras no es tuyo'),G('Sesión 2: Deducciones y Declaración mensual · reels del Buen Fin, fotógrafos y humor de la constancia')]},
+6:{items:[N('31 oct al 6 nov',{e:'listo',n:'Listo: portada con la fecha, RESICO a 5 millones, tu constancia en línea, la declaración vence el martes 17 y el cierre. Lo publicas tú en las cuatro redes.'}),SP('El IVA que cobras no es tuyo'),G('Sesión 2: Deducciones y Declaración mensual · reels del Buen Fin, fotógrafos y humor de la constancia')]},
 7:{items:[SP('El IVA que pagas también cuenta'),Y('Tu constancia de situación fiscal: cómo sacarla y para qué sirve'),T('Tu cliente no necesita tu constancia: necesita cuatro datos',{n:'Corte del video de YouTube.'})]},
 8:{items:[T('El IVA que cobras no es tuyo',{n:'Corte del video de ¿IVA o ISR?'}),SP('Tres errores con mis impuestos que me costaron un mes')]},
 9:{items:[W(9,'9:00','Tip','¿Qué significa «deducir»?',{n:'Prueba de imagen: este tip va con imagen.'}),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
@@ -289,27 +290,27 @@ const DAYS={
   R('¿Eres fotógrafo? Gastos que puedes deducir')]},
 12:{hito:'taller',items:[L('Lo que hay que tener listo antes de declarar','Texto'),RI('Ten esto listo antes de declarar'),
   Y('La declaración mensual paso a paso'),
-  P('vivo','Taller','Compras del Buen Fin que sí cuentan',[['vivo','18:00']],{e:'idea',n:'En vivo por Google Meet, gratis. Sin avisos por WhatsApp: se retiraron la invitación del miércoles 11 y el «Empezamos en 15».'}),G('Sesión 3: Si cobras por app y Se te pasó · reels de la declaración, el 17, el puente y la e.firma')]},
-13:{hito:'Buen Fin',items:[W(13,'9:00','Recordatorio','Tu declaración vence el martes 17'),A(16),
+  P('vivo','Taller','Compras del Buen Fin que sí cuentan',[['vivo','18:00']],{e:'idea',n:'En vivo por Google Meet, gratis. Sin avisos por WhatsApp: se retiraron la invitación del miércoles 11 y el «Empezamos en 15».'}),A(13),G('Sesión 3: Si cobras por app y Se te pasó · reels de la declaración, el 17, el puente y la e.firma')]},
+13:{hito:'Buen Fin',items:[W(13,'9:00','Recordatorio','Tu declaración vence el martes 17'),N('7 al 13 nov'),
   C('Hoy empieza el Buen Fin: dos cosas antes de pagar',{l:[DOC.carr,drive(CF.c3)]}),S()]},
 14:{items:[RH('Cuando te piden la constancia actualizada')]},
 15:{items:[T('Si te salió en ceros, igual se presenta',{n:'Corte del video de la declaración mensual.'})]},
 16:{hito:'descanso',aviso:'Es festivo: el resumen de cuatro temas puede rendir menos por el puente.',items:[
   W(16,'9:00','Tip','¿Declaración mensual o anual?',{n:'Prueba de imagen: este tip va solo con texto.'}),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
-  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Cuatro temas. Portada en la página 7 de Canva.'}),T('Noticias de la semana, cuatro temas')]},
+  T('Noticias de la semana, cuatro temas')]},
 17:{hito:'vence el 17',items:[L('Se declara lo cobrado, no lo facturado','Texto'),W(17,'9:00','Recordatorio','Hoy es el último día'),
   R('Tu declaración mensual en cinco pasos'),Y('Si cobras por app: cómo funcionan tus impuestos')]},
 18:{items:[L('Se te pasó la declaración: qué hacer','Documento'),W(18,'9:30','Info','¿Se te pasó el 17? Respira'),
   C('Se te pasó el 17: qué hacer hoy',{l:[DOC.carr,drive(CF.c4)]}),W(18,'17:00','Invitación','Invitación al taller del jueves 19'),
   T('Se te pasó el 17: qué hacer hoy')]},
 19:{hito:'taller',items:[L('Antes de contratar a un independiente, pide esto','Texto'),RI('Se te pasó el 17: haz esto hoy'),
-  W(19,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),Y('Se te pasó la declaración: qué hacer'),V('Tu declaración del mes, paso a paso')]},
-20:{items:[A(23),RH('Se acabó el puente y también el 17'),S(),G('Sesión 4: Aguinaldo y Checklist de diciembre · reels de aguinaldo, gastos médicos, humor y la profesión')]},
+  W(19,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),Y('Se te pasó la declaración: qué hacer'),V('Tu declaración del mes, paso a paso'),A(20)]},
+20:{items:[N('14 al 20 nov'),RH('Se acabó el puente y también el 17'),S(),G('Sesión 4: Aguinaldo y Checklist de diciembre · reels de aguinaldo, gastos médicos, humor y la profesión')]},
 21:{items:[T('Tu e.firma vence cada cuatro años')]},
 22:{items:[T('Una declaración pendiente te puede costar un contrato',{n:'Corte del video de YouTube.'})]},
 23:{items:[W(23,'9:00','Tip','¿Por qué Uber, DiDi o Rappi te descuentan impuestos?',{n:'Prueba de imagen: este tip va con imagen.'}),
   G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
-  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Un tema. Portada en la página 8 de Canva.'}),T('Noticias de la semana, un solo tema')]},
+  T('Noticias de la semana, un solo tema')]},
 24:{items:[L('Aguinaldo 2026: la parte que no paga ISR','Texto'),R('La parte de tu aguinaldo que no paga ISR'),Y('Tu aguinaldo y el ISR: cuánto está exento')]},
 25:{items:[L('Deducciones personales: lo que tiene que estar pagado antes del 31','Documento'),
   W(25,'9:30','Info','El dentista que pagaste en efectivo no cuenta',{n:'El área fiscal confirma el límite y lo de RESICO antes de mandarlo.'}),
@@ -318,13 +319,13 @@ const DAYS={
 26:{hito:'taller',items:[L('Cierre de año: revisa tus facturas de ida y de vuelta','Texto'),
   W(26,'9:00','Invitación','Invitación al taller de hoy',{n:'Prueba de horario: sale en la mañana en vez del miércoles.'}),
   RI('Si no lo pagas antes del 31, no lo deduces'),W(26,'17:45','Aviso','Empezamos en 15',{n:'Solo texto, con la liga de registro. Sale solo a las 17:45; si ya pasaron las 18:05 no se manda.'}),
-  Y('El checklist de diciembre para independientes'),V('Cierra el año en orden')]},
-27:{items:[A(30),RH('Mi lista de pendientes de diciembre'),S(),G('Sesión 5: los dos primeros videos de diciembre')]},
+  Y('El checklist de diciembre para independientes'),V('Cierra el año en orden'),A(27)]},
+27:{items:[N('21 al 27 nov'),RH('Mi lista de pendientes de diciembre'),S(),G('Sesión 5: los dos primeros videos de diciembre')]},
 28:{items:[T('La siguiente profesión de la serie',{e:'idea',n:'Solo si la serie de profesiones gana el 18.'})]},
 29:{items:[T('Revisa tus doce declaraciones del año',{n:'Corte del video del checklist.'})]},
 30:{hito:'cierre',aviso:'Cierra el experimento de noticias: dos resúmenes de un tema contra dos de cuatro.',items:[
   W(30,'9:00','Tip','¿e.firma o contraseña?',{n:'Prueba de imagen: este tip va solo con texto.'}),L('Diciembre en tres fechas: 17, antes del 20 y 31','Texto'),G('Noticias de la semana','10:00',{n:'Grabación del resumen, con el guion del viernes.'}),
-  CN('Noticias de la semana: lo que pasó y sí te toca',{l:[DOC.carr,DOC.canva],n:'Cuatro temas. Portada en la página 9 de Canva.'}),T('Noticias de la semana, cuatro temas')]},
+  T('Noticias de la semana, cuatro temas')]},
 };
 
 /* herufin (campaña del 5 al 18 de noviembre): todo programado en WhatsApp */
@@ -378,7 +379,7 @@ function pvHTML(p,d){const v=p.pv,h=p.r[0][1];let body='',lbl='Ver cómo se ve';
     body=`<div class="li-card"><div class="li-hd"><i></i><div><b>heru</b><small>${esc(DIAS[(d-1)%7])} ${d} · ${esc(h)} · 🌐</small></div></div>${v.t?`<div class="li-tx">${esc(v.t)}</div><button class="li-more" type="button">…ver más</button>`:`<div class="li-doc">${esc(v.nota||'')}</div>`}${v.i?`<img src="${IMG[v.i]}" alt="Imagen del post">`:''}${v.doc?'<div class="li-doc">📄 Documento · 6 láminas (aquí ves la vista de las láminas)</div>':''}<div class="li-act"><span>👍 Recomendar</span><span>💬 Comentar</span><span>🔁 Compartir</span></div></div>`}
   else if(v.k==='yt'){lbl='👁 Ver el Short';body=`<div class="yt-s"><img src="${IMG[v.i]}" alt="Cuadro del Short"><span>Shorts</span><div>${esc(p.ti)}</div></div>`}
   return `<details class="pv"><summary>${lbl}</summary>${body}${v.t?`<div class="pvbar"><button type="button" data-copy="${esc(v.t)}">Copiar texto</button></div>`:''}</details>`}
-const NOM={tt:'TikTok',ig:'Instagram',yt:'YouTube',li:'LinkedIn',wa:'WhatsApp',vivo:'En vivo',eq:'Equipo'};
+const NOM={tt:'TikTok',ig:'Instagram',fb:'Facebook',yt:'YouTube',li:'LinkedIn',wa:'WhatsApp',vivo:'En vivo',eq:'Equipo'};
 const DIAS='domingo lunes martes miércoles jueves viernes sábado'.split(' ');
 /* WhatsApp: del 5 en adelante ya está programado y sale solo desde el Chrome de Mich */
 for(const d in DAYS)if(+d>=5)DAYS[d].items.forEach(p=>{if(p.g==='wa'&&p.e!=='pub'&&!p.hf&&!p.pausa){p.e='prog';p.n=(p.n?p.n+' ':'')+'Programado: sale solo con WhatsApp Web abierto en Chrome. Si a esa hora la compu está apagada, sale en cuanto la prendas (revisa cada hora).'}});
@@ -396,7 +397,7 @@ const guardar=()=>{try{localStorage.setItem('cal-nov-hechos',JSON.stringify(hech
 const pasa=p=>filtro==='todo'||p.g===filtro;
 const horaDe=p=>{const hs=p.r.map(x=>x[1]).filter(Boolean).sort((a,b)=>min(a)-min(b));return hs[0]||''};
 function badge(p){const rs=p.r.map(x=>x[0]);
-  if(rs.includes('tt')&&rs.includes('ig'))return['TT+IG','b'];
+  if(rs.length>=4)return['4 REDES','b'];if(rs.includes('tt')&&rs.includes('ig'))return['TT+IG','b'];
   const m={tt:['TT','tt'],ig:['IG','ig'],yt:['YT','yt'],li:['IN','li'],wa:['WA','wa'],vivo:['VIVO','vivo'],eq:[p.f==='Armar'?'ARMAR':'GRABAR','eq']};return m[rs[0]]}
 
 document.getElementById('hoyTxt').textContent=HOY>=1&&HOY<=30?`${DIAS[(HOY-1)%7]} ${HOY} de noviembre`:'—';

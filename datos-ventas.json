@@ -1,0 +1,467 @@
+{
+ "generado": "2026-11-18 16:04",
+ "desde": "2026-09-01",
+ "hasta": "2026-11-17",
+ "meses": [
+  "2026-09",
+  "2026-10",
+  "2026-11"
+ ],
+ "redes": [
+  "facebook",
+  "instagram",
+  "tiktok",
+  "youtube",
+  "linkedin",
+  "whatsapp_grupo"
+ ],
+ "signups_declarados": {
+  "2026-09": {
+   "facebook": 116,
+   "instagram": 22,
+   "tiktok": 39,
+   "youtube": null,
+   "linkedin": 5,
+   "whatsapp_grupo": null
+  },
+  "2026-10": {
+   "facebook": 105,
+   "instagram": 14,
+   "tiktok": 47,
+   "youtube": null,
+   "linkedin": 12,
+   "whatsapp_grupo": null
+  },
+  "2026-11": {
+   "facebook": 65,
+   "instagram": 11,
+   "tiktok": 16,
+   "youtube": null,
+   "linkedin": 2,
+   "whatsapp_grupo": null
+  }
+ },
+ "signups_totales": {
+  "2026-09": 2741,
+  "2026-10": 2563,
+  "2026-11": 1229
+ },
+ "signups_link": {
+  "2026-09": {
+   "facebook": {
+    "organico": 3,
+    "pauta": 15
+   },
+   "instagram": {
+    "organico": 2,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 5
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-10": {
+   "facebook": {
+    "organico": 1,
+    "pauta": 4
+   },
+   "instagram": {
+    "organico": 1,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 1
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-11": {
+   "facebook": {
+    "organico": 0,
+    "pauta": 1
+   },
+   "instagram": {
+    "organico": 3,
+    "pauta": 2
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 4,
+    "pauta": 0
+   }
+  }
+ },
+ "visitantes_link": {
+  "2026-09": {
+   "facebook": {
+    "organico": 154,
+    "pauta": 330
+   },
+   "instagram": {
+    "organico": 14,
+    "pauta": 22
+   },
+   "tiktok": {
+    "organico": 11,
+    "pauta": 454
+   },
+   "youtube": {
+    "organico": 43,
+    "pauta": 10
+   },
+   "linkedin": {
+    "organico": 8,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-10": {
+   "facebook": {
+    "organico": 163,
+    "pauta": 29
+   },
+   "instagram": {
+    "organico": 16,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 3,
+    "pauta": 26
+   },
+   "youtube": {
+    "organico": 92,
+    "pauta": 1
+   },
+   "linkedin": {
+    "organico": 20,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-11": {
+   "facebook": {
+    "organico": 82,
+    "pauta": 28
+   },
+   "instagram": {
+    "organico": 52,
+    "pauta": 1
+   },
+   "tiktok": {
+    "organico": 10,
+    "pauta": 17
+   },
+   "youtube": {
+    "organico": 54,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 4,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 139,
+    "pauta": 0
+   }
+  }
+ },
+ "ventas": {
+  "2026-09": {
+   "facebook": {
+    "organico": 5,
+    "pauta": 27
+   },
+   "instagram": {
+    "organico": 1,
+    "pauta": 2
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 1,
+    "pauta": 9
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-10": {
+   "facebook": {
+    "organico": 4,
+    "pauta": 7
+   },
+   "instagram": {
+    "organico": 1,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-11": {
+   "facebook": {
+    "organico": 4,
+    "pauta": 5
+   },
+   "instagram": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 1
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 6,
+    "pauta": 0
+   }
+  }
+ },
+ "ventas_clientes_nuevos": {
+  "2026-09": {
+   "facebook": {
+    "organico": 1,
+    "pauta": 3
+   },
+   "instagram": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-10": {
+   "facebook": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "instagram": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  },
+  "2026-11": {
+   "facebook": {
+    "organico": 0,
+    "pauta": 1
+   },
+   "instagram": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "tiktok": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "youtube": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "linkedin": {
+    "organico": 0,
+    "pauta": 0
+   },
+   "whatsapp_grupo": {
+    "organico": 0,
+    "pauta": 0
+   }
+  }
+ },
+ "clientes_nuevos_declarados": {
+  "2026-09": {
+   "facebook": 7,
+   "instagram": 0,
+   "tiktok": 2,
+   "youtube": 0,
+   "linkedin": 0,
+   "whatsapp_grupo": 0
+  },
+  "2026-10": {
+   "facebook": 14,
+   "instagram": 3,
+   "tiktok": 4,
+   "youtube": 0,
+   "linkedin": 0,
+   "whatsapp_grupo": 0
+  },
+  "2026-11": {
+   "facebook": 3,
+   "instagram": 1,
+   "tiktok": 2,
+   "youtube": 0,
+   "linkedin": 2,
+   "whatsapp_grupo": 0
+  }
+ },
+ "piezas_con_venta": [
+  {
+   "red": "instagram",
+   "utm_campaign": "homepage",
+   "utm_content": "homepage.empieza_gratis",
+   "meses": {
+    "2026-09": 1,
+    "2026-10": 1
+   },
+   "ventas": 2
+  },
+  {
+   "red": "whatsapp_grupo",
+   "utm_campaign": "grupo",
+   "utm_content": "invitacion-2026-11-05",
+   "meses": {
+    "2026-11": 2
+   },
+   "ventas": 2
+  },
+  {
+   "red": "whatsapp_grupo",
+   "utm_campaign": "grupo",
+   "utm_content": "bienvenida-2026-11-07",
+   "meses": {
+    "2026-11": 1
+   },
+   "ventas": 1
+  },
+  {
+   "red": "whatsapp_grupo",
+   "utm_campaign": "grupo",
+   "utm_content": "encuesta-2026-11-08",
+   "meses": {
+    "2026-11": 1
+   },
+   "ventas": 1
+  },
+  {
+   "red": "whatsapp_grupo",
+   "utm_campaign": "grupo",
+   "utm_content": "webinars_gracias.revisar_mi_situación_fiscal",
+   "meses": {
+    "2026-11": 1
+   },
+   "ventas": 1
+  },
+  {
+   "red": "whatsapp_grupo",
+   "utm_campaign": "herufin_2026",
+   "utm_content": "homepage.popup_anual",
+   "meses": {
+    "2026-11": 1
+   },
+   "ventas": 1
+  },
+  {
+   "red": "youtube",
+   "utm_campaign": "contenido_vinculacion",
+   "utm_content": "declaracion_anual.activa_anual",
+   "meses": {
+    "2026-09": 1
+   },
+   "ventas": 1
+  }
+ ],
+ "consultas": {
+  "ventas": "f7fc8d98-183a-42e4-9d24-65f447dee7c2",
+  "signups_link": "ea8fb52b-8e3a-4dc6-a3ed-e833c17e8ce9",
+  "nuevos_declarados": "4b6920e1-3c1e-4eb2-b23c-09fca5b48424",
+  "signups_declarados": "25dbdeb4-2c0a-44a8-b5c4-1ebc2e615a58"
+ }
+}

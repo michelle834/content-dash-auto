@@ -277,6 +277,8 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 
   <div class="tabs">
     <div class="tab active" id="tab-metrics">📊 Métricas</div>
+    <div class="tab" id="tab-ventas">💸 Signups y ventas</div>
+    <div class="tab" id="tab-uno">👥 1:1</div>
     <div class="tab" id="tab-ideas">💡 Ideas de contenido</div>
     <div class="tab" id="tab-paid">🎯 Paid</div>
     <div class="tab" id="tab-vithis">👀 Oye Mich, vi esto…</div>
@@ -870,6 +872,140 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     <div class="panel" style="background:#fff7ed;border-color:#fed7aa;color:#92400e;font-size:12.5px">
       💡 Esta guía es curada (no se actualiza sola). Si quieres, te dejo una tarea que la refresque cada mes con nuevas herramientas y precios. Pídemelo en el chat.
     </div>
+  </section>
+
+  <!-- ============ SIGNUPS Y VENTAS ============ -->
+  <style>
+    .sv-seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+    .sv-seg button{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:13px;font-family:inherit}
+    .sv-seg button.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,#11bafa,#1790EC)}
+    .sv-flabel{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+    .sv-table{width:100%;border-collapse:collapse;font-size:13.5px}
+    .sv-table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:800}
+    .sv-table th:first-child,.sv-table td:first-child{text-align:left}
+    .sv-table td{padding:10px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+    .sv-table tr.tot td{font-weight:800;background:#fafbfe}
+    .sv-table td .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+    .sv-table td small{display:block;color:var(--muted);font-size:11px;font-weight:500}
+    .sv-na{color:#9aa3b2}
+    #sv_piezas th:nth-child(2),#sv_piezas th:nth-child(3),#sv_piezas td:nth-child(2),#sv_piezas td:nth-child(3){text-align:left}
+    .sv-scroll{overflow-x:auto}
+    .sv-medir{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:6px}
+    .sv-medir .it{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;font-size:12.8px;line-height:1.5}
+    .sv-medir .it b{display:block;font-size:13px;margin-bottom:3px}
+    .sv-medir .ok{border-left:4px solid var(--pos)} .sv-medir .parcial{border-left:4px solid var(--amber)} .sv-medir .no{border-left:4px solid #9aa3b2}
+  </style>
+  <section id="view-ventas" class="hidden">
+    <div class="panel" style="display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start">
+      <div>
+        <div class="sv-flabel">Qué ventas contar</div>
+        <div class="sv-seg" id="sv_tipo">
+          <button data-t="organico" class="on">Solo orgánico</button>
+          <button data-t="todo">Orgánico + pauta</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <div class="sv-flabel">De dónde sale</div>
+        <div class="muted" id="sv_fuente" style="font-size:12.5px;line-height:1.5">Cargando…</div>
+      </div>
+    </div>
+
+    <div class="section-title">Resumen <span class="muted" id="sv_periodo" style="font-weight:500;font-size:12px"></span></div>
+    <div class="grid" id="sv_kpis"></div>
+
+    <div class="section-title">📋 Por red, en total y por mes</div>
+    <div class="panel">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px">
+        <div class="sv-seg" id="sv_metrica">
+          <button data-m="ventas" class="on">Ventas</button>
+          <button data-m="nuevos">Ventas de clientes nuevos</button>
+          <button data-m="sig_decl">Signups declarados</button>
+          <button data-m="sig_link">Signups por liga</button>
+          <button data-m="nuevos_decl">Clientes nuevos que declararon la red</button>
+        </div>
+      </div>
+      <div class="desc" id="sv_metrica_desc"></div>
+      <div class="sv-scroll"><table class="sv-table" id="sv_tabla"></table></div>
+    </div>
+
+    <div class="charts">
+      <div class="panel" style="margin-top:0">
+        <h2>Ventas acumuladas por red</h2>
+        <div class="desc" id="sv_c1_desc">Suma de ventas mes a mes, por la última liga de una red que la persona tocó en los 30 días antes de pagar.</div>
+        <div class="chart-box"><canvas id="sv_c1" role="img" aria-label="Ventas acumuladas por red, por mes"></canvas></div>
+      </div>
+      <div class="panel" style="margin-top:0">
+        <h2>Signups atribuidos a redes, acumulados</h2>
+        <div class="desc">Lo que contestan en «¿cómo nos conociste?». WhatsApp no es opción, así que su línea sale de la liga del grupo (UTM).</div>
+        <div class="chart-box"><canvas id="sv_c2" role="img" aria-label="Signups atribuidos a redes acumulados, por mes"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-title">🎯 Qué piezas llevaron a una venta</div>
+    <div class="panel">
+      <div class="desc">Ventas cuya última liga orgánica traía <code>utm_content</code> o <code>utm_campaign</code> propios. Solo se puede ligar una venta a una pieza cuando la liga de esa pieza es única.</div>
+      <div class="sv-scroll"><table class="sv-table" id="sv_piezas"></table></div>
+      <div class="callout" id="sv_piezas_nota"></div>
+    </div>
+
+    <div class="section-title">🔍 Qué se puede medir y qué no</div>
+    <div class="sv-medir" id="sv_medir"></div>
+  </section>
+
+  <!-- ============ 1:1 SEMANAL ============ -->
+  <style>
+    .ua-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+    .ua-bar .wk{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:800;font-size:18px;letter-spacing:-.02em}
+    .ua-bar button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 12px;font-weight:800;font-size:14px;cursor:pointer;color:var(--brand);font-family:inherit}
+    .ua-bar button:disabled{opacity:.35;cursor:default}
+    .ua-rank{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+    .ua-rank .rk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
+    .ua-rank .rk .lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    .ua-rank .rk .big{font-size:22px;font-weight:800;margin:2px 0}
+    .ua-rank .rk .cap{font-size:12px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .ua-rank .rk a{color:inherit;text-decoration:none} .ua-rank .rk a:hover .cap{color:var(--brand)}
+    .ua-th{width:64px;height:84px;border-radius:8px;object-fit:cover;flex:none;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden}
+    .ua-net{margin-top:18px}
+    .ua-net .hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+    .ua-net .hd .sum{font-size:12.5px;color:var(--muted)} .ua-net .hd .sum b{color:var(--ink)}
+    .ua-cal{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:8px;overflow-x:auto}
+    .ua-day{background:#fafbfe;border:1px solid var(--line);border-radius:10px;padding:6px;min-height:90px}
+    .ua-day .dn{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 2px 6px}
+    .ua-day .dn b{color:var(--ink);font-size:13px;margin-left:3px}
+    .ua-day .vac{font-size:11px;color:#b6bfcc;text-align:center;padding-top:16px}
+    .ua-post{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:6px}
+    .ua-post a.th{display:block;aspect-ratio:3/4;background:#eef2f7 center/cover no-repeat;position:relative;text-decoration:none}
+    .ua-post a.th.yt{aspect-ratio:16/9}
+    .ua-post a.th .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;color:#9aa3b2}
+    .ua-post a.th .er{position:absolute;right:5px;bottom:5px;font-size:11px;font-weight:800;border-radius:6px;padding:2px 6px;background:#fff}
+    .ua-post .bd{padding:6px 7px}
+    .ua-post .tm{font-size:10.5px;color:var(--muted);font-weight:700}
+    .ua-post .cp{font-size:11.5px;line-height:1.3;margin:2px 0 5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .ua-post .cp a{color:var(--ink);text-decoration:none} .ua-post .cp a:hover{color:var(--brand)}
+    .ua-post .ms{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+    .ua-post .ms span{font-size:10.5px;text-align:center;background:#f4f6fa;border-radius:5px;padding:3px 0;font-variant-numeric:tabular-nums}
+    .ua-post .ms span b{display:block;font-size:12px}
+    .ua-nodata{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:14px;font-size:12.8px;color:var(--muted)}
+    @media(max-width:760px){.ua-cal{grid-template-columns:repeat(7,140px)}}
+  </style>
+  <section id="view-uno" class="hidden">
+    <div class="panel ua-bar">
+      <button id="ua_prev" aria-label="Semana anterior">◀</button>
+      <div><div class="sv-flabel" style="margin:0">Semana revisada · lunes a domingo</div><div class="wk" id="ua_wk">—</div></div>
+      <button id="ua_next" aria-label="Semana siguiente">▶</button>
+      <button id="ua_hoy" style="font-size:12.5px">Semana pasada</button>
+      <div class="muted" id="ua_fuente" style="margin-left:auto;max-width:430px;font-size:12px;line-height:1.45"></div>
+    </div>
+
+    <div class="section-title">Resumen de la semana por red</div>
+    <div class="grid" id="ua_kpis"></div>
+
+    <div class="section-title">🏆 Rankings de la semana</div>
+    <div class="muted" style="margin:0 2px 8px;font-size:11.5px">Todas las redes juntas. Mejor post = más interacciones (likes + comentarios + compartidos + guardados). Engagement solo cuenta posts con 100 vistas o más.</div>
+    <div class="ua-rank" id="ua_rank"></div>
+
+    <div class="section-title">🗓️ La semana, red por red</div>
+    <div id="ua_redes"></div>
   </section>
 </div>
 
@@ -4215,7 +4351,7 @@ buildPodcast();
 
 /* ---------- tabs ---------- */
 let curTab="metrics";
-const VIEWS=["metrics","ideas","paid","vithis","money","influencers","planner","podcast","hacks","lab"];
+const VIEWS=["metrics","ventas","uno","ideas","paid","vithis","money","influencers","planner","podcast","hacks","lab"];
 function showTab(t){
   if(!VIEWS.includes(t)) t="metrics";
   curTab=t;
@@ -4228,6 +4364,8 @@ function showTab(t){
   // FIX: al mostrar (o restaurar) una pestaña, dibujar su contenido — no solo en el clic
   try{ if(t==="paid" && typeof buildPaid==="function") setTimeout(buildPaid,0); }catch(e){}
   try{ if(t==="planner" && typeof calPaint==="function") setTimeout(calPaint,0); }catch(e){}
+  try{ if(t==="ventas" && typeof buildVentas==="function") setTimeout(buildVentas,0); }catch(e){}
+  try{ if(t==="uno" && typeof build1a1==="function") setTimeout(build1a1,0); }catch(e){}
 }
 VIEWS.forEach(v=>{const tb=document.getElementById("tab-"+v); if(tb) tb.addEventListener("click",()=>showTab(v));});
 
@@ -4257,6 +4395,243 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
   SERVER_DATA={series:r[0]||[],totals:(r[1]&&r[1][0])||{},vids:r[2]||[],vaud:r[3]||[],ages:r[4]||[],countries:r[5]||[],hours:r[6]||[],sources:r[7]||[],GENERATED:((r[8]&&r[8][0]&&(r[8][0].generated||r[8][0].GENERATED))||new Date().toLocaleString("es-MX")),ig_series:r[9]||[],ig_totals:(r[10]&&r[10][0])||{},ig_media:r[11]||[],ig_ages:r[12]||[],ig_countries:r[13]||[],li_series:r[14]||[],li_posts:r[15]||[],li_totals:(r[16]&&r[16][0])||{},li_seniority:r[17]||[],li_industry:r[18]||[],yt_totals:(r[19]&&r[19][0])||{},yt_series:r[20]||[],yt_videos:r[21]||[],yt_sources:r[22]||[]};
   loadAll();
 }).catch(function(e){try{document.getElementById("loading").classList.add("hidden");var el=document.getElementById("err");el.textContent="No se pudieron cargar los datos del Sheet: "+e.message;el.classList.remove("hidden");}catch(_){}});
+</script>
+<script>
+/* =====================================================================
+   Pestañas «Signups y ventas» y «1:1»
+   - Signups y ventas lee datos-ventas.json (conteos del Querybuilder,
+     sin datos de personas). Lo regenera scripts/armar_ventas.py.
+   - 1:1 lee las métricas en vivo de la hoja (DATA.vids, ig_media,
+     yt_videos, li_posts) y las miniaturas guardadas en datos-1a1.json.
+   ===================================================================== */
+(function(){
+  /* Orden fijo de color (paleta categórica validada, no se recicla) */
+  const RED={
+    facebook:      {l:"Facebook",          c:"#2a78d6", ic:"📘"},
+    youtube:       {l:"YouTube",           c:"#eb6834", ic:"▶️"},
+    whatsapp_grupo:{l:"Grupo de WhatsApp", c:"#1baf7a", ic:"💬"},
+    tiktok:        {l:"TikTok",            c:"#eda100", ic:"🎵"},
+    instagram:     {l:"Instagram",         c:"#e87ba4", ic:"📸"},
+    linkedin:      {l:"LinkedIn",          c:"#008300", ic:"💼"}
+  };
+  const ORDEN=["facebook","instagram","tiktok","youtube","linkedin","whatsapp_grupo"];
+  const MES={"01":"ene","02":"feb","03":"mar","04":"abr","05":"may","06":"jun","07":"jul","08":"ago","09":"sep","10":"oct","11":"nov","12":"dic"};
+  const fmt=n=>(n==null||isNaN(n))?"—":nf.format(Math.round(n));
+
+  /* ---------------- SIGNUPS Y VENTAS ---------------- */
+  const SV={d:null,tipo:"organico",met:"ventas",cargando:false};
+  function mesLbl(m){
+    const [y,mm]=m.split("-"); let s=MES[mm]+" "+y.slice(2);
+    const h=SV.d&&SV.d.hasta;
+    if(h && h.slice(0,7)===m){
+      const fin=new Date(Date.UTC(+y,+mm,0)).getUTCDate();
+      if(+h.slice(8,10)<fin) s=MES[mm]+" (1–"+(+h.slice(8,10))+")";
+    }
+    return s;
+  }
+  function tv(o){ if(!o) return 0; return SV.tipo==="todo"?(o.organico||0)+(o.pauta||0):(o.organico||0); }
+  function val(m,r,met){
+    const d=SV.d;
+    if(met==="ventas") return tv(d.ventas[m][r]);
+    if(met==="nuevos") return tv(d.ventas_clientes_nuevos[m][r]);
+    if(met==="sig_link") return tv(d.signups_link[m][r]);
+    if(met==="sig_decl") return d.signups_declarados[m][r];          // null = no es opción
+    if(met==="nuevos_decl") return (r==="youtube"||r==="whatsapp_grupo")?null:d.clientes_nuevos_declarados[m][r];
+    return 0;
+  }
+  const MET_DESC={
+    ventas:"Pagos exitosos cuya última liga de una red, tocada en los 30 días antes de pagar, fue de esa red. Una persona puede tener varias ventas (por ejemplo, la anual y otra declaración).",
+    nuevos:"Las mismas ventas, solo de personas que no habían pagado antes. Es la venta que de verdad trajo la red.",
+    sig_decl:"Signups (aceptaron términos) por lo que contestaron en «¿cómo nos conociste?». YouTube y el grupo de WhatsApp no son opción, por eso salen en gris.",
+    sig_link:"Personas que llegaron al sitio por una liga de esa red (UTM o sitio de origen) y ese mismo mes hicieron signup. Quien baja la app directo de la tienda no aparece.",
+    nuevos_decl:"Clientes que pagaron por primera vez y dijeron en el onboarding que nos conocieron por esa red. Es lo que declaran, no un clic; puede coincidir con una venta por liga."
+  };
+  function svTabla(){
+    const d=SV.d, met=SV.met, meses=d.meses;
+    document.getElementById("sv_metrica_desc").textContent=MET_DESC[met]+(["ventas","nuevos","sig_link"].includes(met)?(SV.tipo==="todo"?" Incluye clics de anuncios.":" Sin clics de anuncios."):"");
+    let h="<thead><tr><th>Red</th>"+meses.map(m=>"<th>"+esc(mesLbl(m))+"</th>").join("")+"<th>Total</th></tr></thead><tbody>";
+    const tot=meses.map(()=>0); let gran=0;
+    ORDEN.forEach(r=>{
+      const vs=meses.map(m=>val(m,r,met)); const na=vs.every(v=>v==null);
+      const sum=vs.reduce((s,v)=>s+(v||0),0);
+      vs.forEach((v,i)=>{tot[i]+=(v||0);}); gran+=sum;
+      h+="<tr><td><span class='sw' style='background:"+RED[r].c+"'></span>"+RED[r].l+
+         (r==="facebook"?"<small>Meta no separa Facebook de Instagram cuando la liga no trae UTM</small>":"")+"</td>"+
+         vs.map(v=>v==null?"<td class='sv-na'>no es opción</td>":"<td>"+fmt(v)+"</td>").join("")+
+         (na?"<td class='sv-na'>—</td>":"<td><b>"+fmt(sum)+"</b></td>")+"</tr>";
+    });
+    h+="<tr class='tot'><td>Total redes</td>"+tot.map(v=>"<td>"+fmt(v)+"</td>").join("")+"<td>"+fmt(gran)+"</td></tr></tbody>";
+    document.getElementById("sv_tabla").innerHTML=h;
+  }
+  function acumulada(get){
+    return ORDEN.map(r=>{
+      let acc=0; const pts=SV.d.meses.map(m=>{const v=get(m,r); if(v==null) return null; acc+=v; return acc;});
+      return {r,pts};
+    }).filter(s=>s.pts.some(v=>v!=null));
+  }
+  function svCharts(){
+    const labels=SV.d.meses.map(mesLbl);
+    const ds=series=>series.map(s=>({label:RED[s.r].l,data:s.pts,borderColor:RED[s.r].c,backgroundColor:RED[s.r].c,
+      borderWidth:2,pointRadius:4,pointHoverRadius:6,pointBorderColor:"#fff",pointBorderWidth:2,tension:0,spanGaps:false}));
+    const opt={responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{position:"bottom",labels:{boxWidth:10,boxHeight:10,usePointStyle:true,font:{size:11.5}}},
+        tooltip:{callbacks:{label:c=>" "+c.dataset.label+": "+fmt(c.parsed.y)+" acumuladas"}}},
+      scales:{y:{beginAtZero:true,ticks:{precision:0,color:"#64748b"},grid:{color:"#eef2f7"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}};
+    mk("sv_c1",{type:"line",data:{labels,datasets:ds(acumulada((m,r)=>val(m,r,"ventas")))},options:opt});
+    const opt2=JSON.parse(JSON.stringify(opt)); opt2.plugins.tooltip={callbacks:{label:c=>" "+c.dataset.label+": "+fmt(c.parsed.y)+" signups acumulados"}};
+    mk("sv_c2",{type:"line",data:{labels,datasets:ds(acumulada((m,r)=>r==="whatsapp_grupo"?(SV.d.signups_link[m][r]||{}).organico||0:SV.d.signups_declarados[m][r]))},options:opt2});
+    document.getElementById("sv_c1_desc").textContent="Suma de ventas mes a mes, por la última liga de una red tocada en los 30 días antes de pagar"+(SV.tipo==="todo"?", incluidos clics de anuncios.":", sin clics de anuncios.");
+  }
+  function svKpis(){
+    const d=SV.d, M=d.meses;
+    const sum=f=>M.reduce((s,m)=>s+ORDEN.reduce((t,r)=>t+(f(m,r)||0),0),0);
+    const ventas=sum((m,r)=>val(m,r,"ventas")), nuevos=sum((m,r)=>val(m,r,"nuevos"));
+    const sd=sum((m,r)=>val(m,r,"sig_decl")), st=M.reduce((s,m)=>s+(d.signups_totales[m]||0),0);
+    const nd=sum((m,r)=>val(m,r,"nuevos_decl")), sl=sum((m,r)=>val(m,r,"sig_link"));
+    const k=(l,v,s)=>`<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div><div class="delta flat">${s}</div></div>`;
+    document.getElementById("sv_kpis").innerHTML=
+      k("Ventas por liga de redes",fmt(ventas),fmt(nuevos)+" de clientes nuevos")+
+      k("Signups declarados de redes",fmt(sd),pct(st?sd/st*100:0)+" de "+fmt(st)+" signups")+
+      k("Signups por liga de redes",fmt(sl),"llegaron por un link y se registraron")+
+      k("Clientes nuevos que declararon una red",fmt(nd),"pagaron por primera vez");
+    document.getElementById("sv_periodo").textContent="· del "+fechaLarga(d.desde)+" al "+fechaLarga(d.hasta);
+  }
+  function fechaLarga(s){ if(!s) return "—"; return (+s.slice(8,10))+" "+MES[s.slice(5,7)]+" "+s.slice(0,4); }
+  function svPiezas(){
+    const P=SV.d.piezas_con_venta||[];
+    let h="<thead><tr><th>Red</th><th>Campaña (utm_campaign)</th><th>Pieza (utm_content)</th><th>Mes</th><th>Ventas</th></tr></thead><tbody>";
+    h+=P.length?P.map(p=>"<tr><td><span class='sw' style='background:"+RED[p.red].c+"'></span>"+RED[p.red].l+"</td><td>"+esc(p.utm_campaign||"—")+"</td><td>"+esc(p.utm_content||"—")+"</td><td>"+Object.keys(p.meses).map(mesLbl).join(", ")+"</td><td><b>"+fmt(p.ventas)+"</b></td></tr>").join("")
+      :"<tr><td colspan='5' class='sv-na'>Ninguna venta orgánica trae una pieza identificable en este periodo.</td></tr>";
+    document.getElementById("sv_piezas").innerHTML=h+"</tbody>";
+    document.getElementById("sv_piezas_nota").innerHTML="<b>Lo que no aparece aquí no es cero:</b> los posts de TikTok, Instagram y Facebook mandan a la liga de la bio, que es la misma para todos los posts, así que una venta por esa liga no dice qué post la provocó. Para medir por post, cada pieza necesita su propia liga go.heru.app con <code>utm_content</code> (como <code>taller26-tt</code> y <code>taller26-ig</code>, que existen desde el 18 de nov).";
+  }
+  function svMedir(){
+    const it=(c,t,x)=>`<div class="it ${c}"><b>${t}</b>${x}</div>`;
+    document.getElementById("sv_medir").innerHTML=
+      it("ok","💬 Grupo de WhatsApp · sí, por mensaje","Cada liga del grupo lleva <code>utm_content</code> con su fecha (invitación, bienvenida, encuesta), así que se sabe qué mensaje llevó a la venta. No aparece en «¿cómo nos conociste?», por eso sus signups salen de la liga.")+
+      it("parcial","📘 Facebook · por liga, no por post","Meta agrega <code>fbclid</code> a todas sus ligas, orgánicas o de anuncio. La mayoría de las ventas «de Facebook» traen <code>utm_medium=cpc</code> o <code>paid</code>: son anuncios, y por eso están fuera en «Solo orgánico». No hay conector de Facebook orgánico en Windsor.")+
+      it("parcial","📸 Instagram · por liga de bio","Desde el 12 de nov la bio lleva <code>utm_campaign=bio</code> y <code>utm_medium=organic_social</code>: mide la cuenta, no el post. Las ligas go.heru.app/instagram mandan a WhatsApp, no al sitio, y ahí la venta ya no se puede seguir.")+
+      it("no","🎵 TikTok · solo lo declarado","Ninguna venta tiene como última liga a TikTok. Lo que hay son clientes nuevos que dicen haber llegado por TikTok. La liga de la bio es una sola para todos los videos.")+
+      it("parcial","▶️ YouTube · por video, si la descripción tiene su liga","El video de vinculación de e.firma (<code>contenido_vinculacion</code>) sí se mide. YouTube no es opción en «¿cómo nos conociste?». Varias ventas de YouTube traen <code>gclid</code>: son anuncios de Google.")+
+      it("no","💼 LinkedIn · solo lo declarado","Sin ventas por liga. Hay signups y clientes nuevos que dicen venir de LinkedIn.")+
+      it("no","💰 Montos · fuera a propósito","El sitio es público, así que la pestaña solo muestra conteos, sin montos ni datos de clientes.");
+  }
+  function svPintar(){ if(!SV.d) return; svKpis(); svTabla(); svCharts(); svPiezas(); }
+  window.buildVentas=function(){
+    if(SV.d){ svPintar(); return; }
+    if(SV.cargando) return; SV.cargando=true;
+    fetch("datos-ventas.json?_="+Date.now()).then(r=>{if(!r.ok) throw new Error("HTTP "+r.status); return r.json();}).then(d=>{
+      SV.d=d;
+      document.getElementById("sv_fuente").innerHTML="Querybuilder de heru, solo conteos. Corte al <b>"+fechaLarga(d.hasta)+"</b> (actualizado "+esc(d.generado||"")+"). Venta = pago exitoso; se atribuye a la <b>última liga de una red</b> que la persona tocó en los 30 días antes de pagar. Signup = aceptó términos. Las UTM y la red declarada son señales, no atribución exacta.";
+      svMedir(); svPintar();
+    }).catch(e=>{
+      document.getElementById("sv_fuente").textContent="No se pudo leer datos-ventas.json: "+e.message+". Si abriste el archivo directo, levanta un servidor (python3 -m http.server).";
+    }).finally(()=>{SV.cargando=false;});
+  };
+  document.getElementById("sv_tipo").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return;
+    SV.tipo=b.dataset.t; [...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b)); svPintar();});
+  document.getElementById("sv_metrica").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return;
+    SV.met=b.dataset.m; [...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b)); svTabla();});
+
+  /* ---------------- 1:1 SEMANAL ---------------- */
+  const UA={off:-1,thumbs:null,meta:{}};
+  const DIAS=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+  const cdmx=d=>new Date(d.getTime()-6*3600e3);                   // CDMX (UTC−6, sin horario de verano)
+  const ymd=d=>d.toISOString().slice(0,10);
+  function lunes(off){
+    const n=cdmx(new Date()); const x=new Date(Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()));
+    x.setUTCDate(x.getUTCDate()-((x.getUTCDay()+6)%7)+7*off); return x;
+  }
+  function dias(off){ const l=lunes(off); return [...Array(7)].map((_,i)=>{const d=new Date(l); d.setUTCDate(l.getUTCDate()+i); return ymd(d);}); }
+  function parseUTC(s){ s=String(s||"").trim(); if(!s) return null;
+    s=s.replace(" ","T").replace(/\+0000$/,"Z").replace(/\+00:00$/,"Z"); if(!/Z$/.test(s)&&s.length>10) s+="Z";
+    const t=new Date(s); return isNaN(t)?null:t; }
+  const cut=(s,n)=>{s=String(s||"").replace(/\s+/g," ").trim(); return s.length>n?s.slice(0,n-1)+"…":s;};
+  function posts(){
+    const out=[]; const T=UA.thumbs||{};
+    __own(DATA.vids).forEach(v=>{ const t=parseUTC(v.video_create_datetime); if(!t) return; const c=cdmx(t);
+      const vi=num(v.video_views_count), li=num(v.video_likes), co=num(v.video_comments), sh=num(v.video_shares), sa=num(v.video_favorites);
+      out.push({red:"tiktok",id:String(v.video_id),dia:ymd(c),hora:c.toISOString().slice(11,16),url:String(v.video_share_url||"").split("?")[0],
+        thumb:T[String(v.video_id)]||"",txt:v.video_caption,vistas:vi,likes:li,coms:co,shares:sh,saves:sa}); });
+    __own(DATA.ig_media).forEach(v=>{ if(String(v.media_type||"").toUpperCase()==="STORY") return; const t=parseUTC(v.timestamp); if(!t) return; const c=cdmx(t);
+      const vi=num(v.media_views)||num(v.media_reach), li=num(v.media_like_count), co=num(v.media_comments_count), sh=num(v.media_shares), sa=num(v.media_saved);
+      out.push({red:"instagram",id:String(v.media_id),dia:ymd(c),hora:c.toISOString().slice(11,16),url:v.media_permalink,
+        thumb:T[String(v.media_id)]||"",txt:v.media_caption,vistas:vi,likes:li,coms:co,shares:sh,saves:sa,eng:num(v.media_engagement)}); });
+    (DATA.yt_videos||[]).forEach(v=>{ const d=String(v.published_at||"").slice(0,10); if(!d) return;
+      out.push({red:"youtube",id:String(v.video_id),dia:d,hora:"",url:v.url,thumb:"https://i.ytimg.com/vi/"+encodeURIComponent(v.video_id)+"/mqdefault.jpg",
+        txt:v.title,vistas:num(v.views),likes:num(v.likes),coms:num(v.comments),shares:null,saves:null}); });
+    (DATA.li_posts||[]).forEach(v=>{ const d=String(v.share_published_time||"").slice(0,10); if(!d) return;
+      const tipo={image:"imagen",document:"carrusel (documento)",video:"video",article:"artículo",text:"texto"}[String(v.share_post_type||"").toLowerCase()]||(v.share_post_type||"post");
+      const tx=(UA.meta.textos||{})[String(v.share_id)];
+      out.push({red:"linkedin",id:String(v.share_id),dia:d,hora:"",url:v.share_url,thumb:T[String(v.share_id)]||"",txt:tx||("Post de LinkedIn · "+tipo),
+        vistas:num(v.share_impression_count),likes:num(v.share_like_count),coms:num(v.share_comment_count),shares:num(v.share_count),saves:null}); });
+    out.forEach(p=>{ p.inter=p.eng||(p.likes+p.coms+(p.shares||0)+(p.saves||0)); p.er=p.vistas>0?p.inter/p.vistas*100:null; });
+    return out;
+  }
+  const erCls=e=>e==null?"":(e>=3?"b-good":(e>=1?"b-warn":"b-bad"));
+  function th(p,cls){ const ph=RED[p.red].ic;
+    return p.thumb?`<img class="${cls||"ua-th"}" src="${esc(p.thumb)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;ua-th&quot;>${ph}</div>'">`:`<div class="${cls||"ua-th"}">${ph}</div>`; }
+  function postCard(p){
+    const m=(l,v)=>`<span><b>${v==null?"—":fmt(v)}</b>${l}</span>`;
+    const bg=p.thumb?` style="background-image:url('${esc(p.thumb)}')"`:"";
+    return `<div class="ua-post">
+      <a class="th${p.red==="youtube"?" yt":""}" href="${esc(p.url||"#")}" target="_blank" rel="noopener"${bg}>${p.thumb?"":`<span class="ph">${RED[p.red].ic}</span>`}
+        <span class="er er-badge ${erCls(p.er)}">${p.er==null?"—":pct(p.er)}</span></a>
+      <div class="bd"><div class="tm">${p.hora?p.hora+" h":"&nbsp;"}</div>
+        <div class="cp"><a href="${esc(p.url||"#")}" target="_blank" rel="noopener">${esc(cut(p.txt||"(sin texto)",90))}</a></div>
+        <div class="ms">${m("vistas",p.vistas)}${m("likes",p.likes)}${m("coment.",p.coms)}${m("compart.",p.shares)}${m("guard.",p.saves)}${m("interac.",p.inter)}</div>
+      </div></div>`;
+  }
+  function uaPintar(){
+    if(typeof DATA==="undefined"||!DATA||!DATA.vids) return;
+    const D=dias(UA.off), set=new Set(D);
+    const P=posts().filter(p=>set.has(p.dia));
+    const f=s=>{const [y,m,d]=s.split("-"); return (+d)+" "+MES[m];};
+    document.getElementById("ua_wk").textContent="Del "+f(D[0])+" al "+f(D[6])+" "+D[6].slice(0,4)+(UA.off===0?" · semana en curso":"");
+    document.getElementById("ua_next").disabled=UA.off>=0;
+    document.getElementById("ua_fuente").innerHTML="Métricas en vivo de la hoja del dash (Windsor + YouTube), corte <b>"+esc(String((SERVER_DATA&&SERVER_DATA.GENERATED)||"—"))+"</b>. Miniaturas guardadas cada lunes"+(UA.meta.generado?" (última: "+esc(UA.meta.generado)+")":"")+". Horas de Ciudad de México.";
+    const redes=["tiktok","instagram","facebook","youtube","linkedin"];
+    // KPIs por red
+    const k=(r,ps)=>{ const v=ps.reduce((s,p)=>s+p.vistas,0), it=ps.reduce((s,p)=>s+p.inter,0);
+      return `<div class="kpi"><div class="label">${RED[r].ic} ${RED[r].l}</div><div class="val">${fmt(ps.length)} <span style="font-size:13px;font-weight:600;color:var(--muted)">posts</span></div>
+        <div class="delta flat">${fmt(v)} ${r==="linkedin"?"impresiones":"vistas"} · ${fmt(it)} interacciones · ER ${v?pct(it/v*100):"—"}</div></div>`; };
+    document.getElementById("ua_kpis").innerHTML=redes.filter(r=>r!=="facebook").map(r=>k(r,P.filter(p=>p.red===r))).join("")+
+      `<div class="kpi" style="opacity:.7"><div class="label">📘 Facebook</div><div class="val" style="font-size:16px">Sin datos</div><div class="delta flat">No hay conector orgánico en Windsor</div></div>`;
+    // Rankings
+    const top=(arr,key)=>arr.slice().sort((a,b)=>(b[key]||0)-(a[key]||0))[0];
+    const rk=(lbl,p,v)=>p?`<div class="rk">${th(p)}<div style="min-width:0"><div class="lbl">${lbl}</div><div class="big">${v}</div>
+        <a href="${esc(p.url||"#")}" target="_blank" rel="noopener"><div class="cap">${RED[p.red].ic} ${esc(cut(p.txt||"(sin texto)",80))}</div></a>
+        <div class="muted" style="font-size:11px;margin-top:3px">${RED[p.red].l} · ${f(p.dia)}${p.hora?" · "+p.hora+" h":""}</div></div></div>`
+      :`<div class="rk"><div><div class="lbl">${lbl}</div><div class="muted">Sin posts esta semana</div></div></div>`;
+    const conVistas=P.filter(p=>p.vistas>=100&&p.er!=null);
+    const b=top(P,"inter"), mv=top(P,"vistas"), me=top(conVistas,"er"), mc=top(P,"coms");
+    document.getElementById("ua_rank").innerHTML=
+      rk("🥇 Mejor post",b,b?fmt(b.inter)+" interacciones":"")+
+      rk("👀 Más vistas",mv,mv?fmt(mv.vistas)+" vistas":"")+
+      rk("🔥 Más engagement",me,me?pct(me.er):"")+
+      rk("💬 Más comentarios",mc&&mc.coms>0?mc:null,mc?fmt(mc.coms)+(mc.coms===1?" comentario":" comentarios"):"");
+    // Calendario por red
+    document.getElementById("ua_redes").innerHTML=redes.map(r=>{
+      const hd=`<div class="hd"><span class="plat ${({tiktok:"tt",instagram:"ig",youtube:"yt",linkedin:"li",facebook:"fb"})[r]}" ${r==="facebook"?'style="background:#2a78d6"':""}>${RED[r].ic} ${RED[r].l}</span>`;
+      if(r==="facebook") return `<div class="ua-net">${hd}</div><div class="ua-nodata">Facebook orgánico no se puede medir todavía: Windsor solo tiene conectados Instagram, TikTok y LinkedIn. Para tenerlo, hay que conectar <code>facebook_organic</code> (Páginas de Facebook) en Windsor.</div></div>`;
+      const ps=P.filter(p=>p.red===r);
+      const v=ps.reduce((s,p)=>s+p.vistas,0), it=ps.reduce((s,p)=>s+p.inter,0);
+      const cal=D.map((d,i)=>{ const dp=ps.filter(p=>p.dia===d).sort((a,b)=>a.hora.localeCompare(b.hora));
+        return `<div class="ua-day"><div class="dn">${DIAS[i]}<b>${+d.slice(8,10)}</b></div>${dp.length?dp.map(postCard).join(""):'<div class="vac">sin post</div>'}</div>`; }).join("");
+      const nota=r==="linkedin"?" · vistas = impresiones; interacciones sin clics":(r==="youtube"?" · YouTube no da hora ni compartidos/guardados":"");
+      return `<div class="ua-net">${hd}<span class="sum"><b>${fmt(ps.length)}</b> posts · <b>${fmt(v)}</b> ${r==="linkedin"?"impresiones":"vistas"} · <b>${fmt(it)}</b> interacciones · ER <b>${v?pct(it/v*100):"—"}</b>${nota}</span></div><div class="ua-cal">${cal}</div></div>`;
+    }).join("");
+  }
+  window.build1a1=function(){
+    if(UA.thumbs){ uaPintar(); return; }
+    fetch("datos-1a1.json?_="+Date.now()).then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{
+      UA.thumbs=(j&&j.thumbs)||{}; UA.meta=j||{}; uaPintar();
+    });
+  };
+  document.getElementById("ua_prev").onclick=()=>{UA.off--; uaPintar();};
+  document.getElementById("ua_next").onclick=()=>{if(UA.off<0){UA.off++; uaPintar();}};
+  document.getElementById("ua_hoy").onclick=()=>{UA.off=-1; uaPintar();};
+})();
 </script>
 </body>
 </html>

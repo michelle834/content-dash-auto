@@ -38,6 +38,9 @@ Las aprobaciones van al revés: la página manda un POST a Apps Script, que escr
 | `index.html` | El tablero completo: una sola página, sin build, sin dependencias |
 | `metricas/index.html` | El Content Dash. Vive aquí desde el 16 de octubre; antes estaba suelto en Cloudflare Pages. Lee la hoja de métricas en vivo por gviz, no `datos.json` |
 | `datos.json` | Foto del pool. **Lo escribe el workflow, no se edita a mano** |
+| `datos-ventas.json` | Pestaña «Signups y ventas» del dash: solo conteos del Querybuilder, por mes y red. Lo arma `scripts/armar_ventas.py` |
+| `datos-1a1.json` · `thumbs/` | Pestaña «1:1»: miniaturas (y texto de LinkedIn) de los posts, guardadas porque las ligas de las redes caducan. Las métricas se leen en vivo de la hoja. Lo arma `scripts/miniaturas.py` |
+| `scripts/actualizacion-lunes.md` | Prompt de la actualización de los lunes de esas dos pestañas |
 | `investigacion/*.md` | 26 tabs de investigación. El 24 es la parrilla semanal, el 22 el branding |
 | `skills/*/SKILL.md` | Las 16 skills de heru, sincronizadas con las de la cuenta. Si Claude Code ya las carga desde la cuenta, esas mandan; esta copia existe para que el repo se entienda solo y para revisar cambios en el diff |
 | `pool-semilla.csv` | Semilla del pool, 25 candidatos |

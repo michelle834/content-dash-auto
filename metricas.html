@@ -897,13 +897,6 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
   </style>
   <section id="view-ventas" class="hidden">
     <div class="panel" style="display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start">
-      <div>
-        <div class="sv-flabel">Qué ventas contar</div>
-        <div class="sv-seg" id="sv_tipo">
-          <button data-t="organico" class="on">Solo orgánico</button>
-          <button data-t="todo">Orgánico + pauta</button>
-        </div>
-      </div>
       <div style="flex:1;min-width:240px">
         <div class="sv-flabel">De dónde sale</div>
         <div class="muted" id="sv_fuente" style="font-size:12.5px;line-height:1.5">Cargando…</div>
@@ -943,7 +936,7 @@ h1,h2,h3,.big,.kpi,.num{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 
     <div class="section-title">🎯 Qué piezas llevaron a una venta</div>
     <div class="panel">
-      <div class="desc">Ventas cuya última liga orgánica traía <code>utm_content</code> o <code>utm_campaign</code> propios. Solo se puede ligar una venta a una pieza cuando la liga de esa pieza es única.</div>
+      <div class="desc">Ventas cuya última liga traía <code>utm_content</code> o <code>utm_campaign</code> propios. Solo se puede ligar una venta a una pieza cuando la liga de esa pieza es única.</div>
       <div class="sv-scroll"><table class="sv-table" id="sv_piezas"></table></div>
       <div class="callout" id="sv_piezas_nota"></div>
     </div>
@@ -1460,7 +1453,7 @@ function mRenderMercado(){
     <details style="margin-top:8px"><summary class="muted" style="font-size:12px;cursor:pointer">Ver el ranking</summary><div style="margin-top:6px">${tabla}</div></details></div>`;
   const l1=`<div class="delta" style="color:${col(igOk)}">${igPos?igPos+'º de '+igTot:'—'} · ${igPosCom?igPosCom+'º de '+(com1.length+1)+' comerciales':''}</div>
     <div class="delta flat">Meta: ${B1.meta}º lugar (${fIG(umbral1)}). ${igOk?'Ya estás en la meta.':(falta1?`Faltan ~${pf(falta1)} interacciones en la pieza mediana.`:'')}</div>
-    ${ig.publico?'':'<div class="delta flat" style="color:var(--amber)">Aprox.: la hoja trae me gusta orgánicos, no el conteo público que se ve en la app. Con el público sube como 15%.</div>'}`;
+    ${ig.publico?'':'<div class="delta flat" style="color:var(--amber)">Aprox.: la hoja trae los me gusta de la API, no el conteo público que se ve en la app. Con el público sube como 15%.</div>'}`;
   const l2=`<div class="delta" style="color:${col(ttOk)}">${ttPos?ttPos+'º de '+(ctas2.length+1):'—'} · ${ttPosAct?ttPosAct+'º de '+(act2.length+1)+' activas':''}</div>
     <div class="delta flat">Meta: ${B2.meta}º lugar entre cuentas activas${umbral2!=null?' ('+fTT(umbral2)+')':''}. ${ttOk?'Ya estás en la meta: toca sostenerla.':''}</div>
     <div class="delta flat">Mediana de ${tt.n} videos sobre ${pf(tt.F)} seguidores.</div>`;
@@ -1626,7 +1619,7 @@ function mScore(net){
   if(net==="tt"){
     const fy=num(((DATA.sources||[]).find(r=>r.video_impression_sources_impression_source==="For You")||{}).video_impression_sources_percentage);
     const sAlc=Math.min(fy/0.8,1);
-    parts=[["Crecimiento",sCrec],["Engagement",sEng],["Alcance orgánico",sAlc],["Consistencia",sCons]];
+    parts=[["Crecimiento",sCrec],["Engagement",sEng],["Alcance en Para ti",sAlc],["Consistencia",sCons]];
     total=Math.round((sCrec+sEng+sAlc+sCons)/4*100);
   } else {
     parts=[["Crecimiento",sCrec],["Engagement",sEng],["Consistencia",sCons]];
@@ -1679,26 +1672,23 @@ function mRenderKPIs(nets,w){
       watch = mKpiCard("Tiempo visto · reels", (m.watchSec?m.watchSec.toFixed(1)+"s":"—"));
     }
     const erColor=m.er>=(net==="tt"?3:2)?"var(--pos)":(m.er>=1?"var(--amber)":"var(--neg)");
-    /* En IG las "vistas totales" son las de la CUENTA (organico + pauta) mas los
-       colabs publicados en cuentas de terceros. La suma de los posts propios NO
-       incluye la pauta: Instagram solo la reporta a nivel cuenta, no por pieza. */
+    /* En IG las "vistas totales" son las de la CUENTA (todo junto: Mich pidió no
+       separar pauta de orgánico) mas los colabs publicados en cuentas de terceros.
+       El promedio por post usa ese mismo total entre las publicaciones del periodo. */
     const __igCuenta=(DATA.ig_series||[]).reduce((s,r)=>s+(inW(r.date,w)?num(r.views):0),0);
     const __esColab=v=>/^collab/i.test(String((v&&v.media_id)||''));
     const __igColabs=(m.P||[]).reduce((s,v)=>s+(__esColab(v)?num(v.media_views):0),0);
     const __igPropio=(m.P||[]).reduce((s,v)=>s+(__esColab(v)?0:num(v.media_views)),0);
-    const __igPauta=Math.max(__igCuenta-__igPropio,0);
     const totalV = net==="ig" ? (__igCuenta+__igColabs)
                               : (m.P||[]).reduce((s,v)=>s+num(v.video_views_count),0);
     const __kr=__krReach(net);
     const __krC=__kr.pct>=100?"var(--pos)":(__kr.pct>=70?"var(--amber)":"var(--neg)");
-    const __krSub= net==="ig"
-      ? `KR Reach ${__kr.mo} (todo): <span style="color:${__krC}">${pf(__kr.val)} / ${pf(__kr.meta)} · ${Math.round(__kr.pct)}%</span><br><span style="opacity:.75">org ${pf(__kr.org)} · pauta ${pf(__kr.pauta)} · colabs ${pf(__kr.colabs)}</span>`
-      : `KR Reach ${__kr.mo}: <span style="color:${__krC}">${pf(__kr.val)} / ${pf(__kr.meta)} · ${Math.round(__kr.pct)}%</span>`;
+    const __krSub=`KR Reach ${__kr.mo}: <span style="color:${__krC}">${pf(__kr.val)} / ${pf(__kr.meta)} · ${Math.round(__kr.pct)}%</span>`;
     return `<div class="netcol">
       <div class="nethdr"><span class="plat ${I.cls}">${I.emoji} ${I.name}</span><span class="muted">${m.n} publicaciones en el periodo</span></div>
       <div class="grid">
-        ${mKpiCard("Vistas totales", pf(totalV), (net==="ig"&&totalV!==__kr.val?`periodo: org ${pf(__igPropio)} \u00b7 pauta ${pf(__igPauta)} \u00b7 colabs ${pf(__igColabs)}<br>`:"")+__krSub)}
-        ${mKpiCard("Vistas promedio / post", pf(m.avgViews), net==="ig"?"solo tus posts, sin pauta":"")}
+        ${mKpiCard("Vistas totales", pf(totalV), (net==="ig"?"vistas de la cuenta, colabs incluidos<br>":"")+__krSub)}
+        ${mKpiCard("Vistas promedio / post", pf(net==="ig"?(m.n?totalV/m.n:0):m.avgViews), net==="ig"?"vistas totales entre publicaciones del periodo":"")}
         ${mKpiCard("Engagement rate (propio)", `<span style="color:${erColor}">${pct(m.er)}</span>`, (net==="ig"||net==="tt")?"sobre alcance":"sobre vistas")}
         ${watch}
       </div>
@@ -4419,7 +4409,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
   const fmt=n=>(n==null||isNaN(n))?"—":nf.format(Math.round(n));
 
   /* ---------------- SIGNUPS Y VENTAS ---------------- */
-  const SV={d:null,tipo:"organico",met:"ventas",cargando:false};
+  const SV={d:null,met:"ventas",cargando:false};
   function mesLbl(m){
     const [y,mm]=m.split("-"); let s=MES[mm]+" "+y.slice(2);
     const h=SV.d&&SV.d.hasta;
@@ -4429,7 +4419,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
     }
     return s;
   }
-  function tv(o){ if(!o) return 0; return SV.tipo==="todo"?(o.organico||0)+(o.pauta||0):(o.organico||0); }
+  function tv(o){ if(!o) return 0; return (o.organico||0)+(o.pauta||0); }  // todo junto, sin separar pauta
   function val(m,r,met){
     const d=SV.d;
     if(met==="ventas") return tv(d.ventas[m][r]);
@@ -4448,7 +4438,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
   };
   function svTabla(){
     const d=SV.d, met=SV.met, meses=d.meses;
-    document.getElementById("sv_metrica_desc").textContent=MET_DESC[met]+(["ventas","nuevos","sig_link"].includes(met)?(SV.tipo==="todo"?" Incluye clics de anuncios.":" Sin clics de anuncios."):"");
+    document.getElementById("sv_metrica_desc").textContent=MET_DESC[met];
     let h="<thead><tr><th>Red</th>"+meses.map(m=>"<th>"+esc(mesLbl(m))+"</th>").join("")+"<th>Total</th></tr></thead><tbody>";
     const tot=meses.map(()=>0); let gran=0;
     ORDEN.forEach(r=>{
@@ -4479,8 +4469,8 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
       scales:{y:{beginAtZero:true,ticks:{precision:0,color:"#64748b"},grid:{color:"#eef2f7"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}};
     mk("sv_c1",{type:"line",data:{labels,datasets:ds(acumulada((m,r)=>val(m,r,"ventas")))},options:opt});
     const opt2=JSON.parse(JSON.stringify(opt)); opt2.plugins.tooltip={callbacks:{label:c=>" "+c.dataset.label+": "+fmt(c.parsed.y)+" signups acumulados"}};
-    mk("sv_c2",{type:"line",data:{labels,datasets:ds(acumulada((m,r)=>r==="whatsapp_grupo"?(SV.d.signups_link[m][r]||{}).organico||0:SV.d.signups_declarados[m][r]))},options:opt2});
-    document.getElementById("sv_c1_desc").textContent="Suma de ventas mes a mes, por la última liga de una red tocada en los 30 días antes de pagar"+(SV.tipo==="todo"?", incluidos clics de anuncios.":", sin clics de anuncios.");
+    mk("sv_c2",{type:"line",data:{labels,datasets:ds(acumulada((m,r)=>r==="whatsapp_grupo"?tv(SV.d.signups_link[m][r]):SV.d.signups_declarados[m][r]))},options:opt2});
+    document.getElementById("sv_c1_desc").textContent="Suma de ventas mes a mes, por la última liga de una red tocada en los 30 días antes de pagar.";
   }
   function svKpis(){
     const d=SV.d, M=d.meses;
@@ -4501,7 +4491,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
     const P=SV.d.piezas_con_venta||[];
     let h="<thead><tr><th>Red</th><th>Campaña (utm_campaign)</th><th>Pieza (utm_content)</th><th>Mes</th><th>Ventas</th></tr></thead><tbody>";
     h+=P.length?P.map(p=>"<tr><td><span class='sw' style='background:"+RED[p.red].c+"'></span>"+RED[p.red].l+"</td><td>"+esc(p.utm_campaign||"—")+"</td><td>"+esc(p.utm_content||"—")+"</td><td>"+Object.keys(p.meses).map(mesLbl).join(", ")+"</td><td><b>"+fmt(p.ventas)+"</b></td></tr>").join("")
-      :"<tr><td colspan='5' class='sv-na'>Ninguna venta orgánica trae una pieza identificable en este periodo.</td></tr>";
+      :"<tr><td colspan='5' class='sv-na'>Ninguna venta trae una pieza identificable en este periodo.</td></tr>";
     document.getElementById("sv_piezas").innerHTML=h+"</tbody>";
     document.getElementById("sv_piezas_nota").innerHTML="<b>Lo que no aparece aquí no es cero:</b> los posts de TikTok, Instagram y Facebook mandan a la liga de la bio, que es la misma para todos los posts, así que una venta por esa liga no dice qué post la provocó. Para medir por post, cada pieza necesita su propia liga go.heru.app con <code>utm_content</code> (como <code>taller26-tt</code> y <code>taller26-ig</code>, que existen desde el 18 de nov).";
   }
@@ -4509,10 +4499,10 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
     const it=(c,t,x)=>`<div class="it ${c}"><b>${t}</b>${x}</div>`;
     document.getElementById("sv_medir").innerHTML=
       it("ok","💬 Grupo de WhatsApp · sí, por mensaje","Cada liga del grupo lleva <code>utm_content</code> con su fecha (invitación, bienvenida, encuesta), así que se sabe qué mensaje llevó a la venta. No aparece en «¿cómo nos conociste?», por eso sus signups salen de la liga.")+
-      it("parcial","📘 Facebook · por liga, no por post","Meta agrega <code>fbclid</code> a todas sus ligas, orgánicas o de anuncio. La mayoría de las ventas «de Facebook» traen <code>utm_medium=cpc</code> o <code>paid</code>: son anuncios, y por eso están fuera en «Solo orgánico». No hay conector de Facebook orgánico en Windsor.")+
-      it("parcial","📸 Instagram · por liga de bio","Desde el 12 de nov la bio lleva <code>utm_campaign=bio</code> y <code>utm_medium=organic_social</code>: mide la cuenta, no el post. Las ligas go.heru.app/instagram mandan a WhatsApp, no al sitio, y ahí la venta ya no se puede seguir.")+
+      it("parcial","📘 Facebook · por liga, no por post","Meta agrega <code>fbclid</code> a todas sus ligas, así que la venta se liga a Facebook pero no a un post. Windsor no tiene conector de las publicaciones de Facebook.")+
+      it("parcial","📸 Instagram · por liga de bio","Desde el 12 de nov la bio lleva <code>utm_campaign=bio</code>: mide la cuenta, no el post. Las ligas go.heru.app/instagram mandan a WhatsApp, no al sitio, y ahí la venta ya no se puede seguir.")+
       it("no","🎵 TikTok · solo lo declarado","Ninguna venta tiene como última liga a TikTok. Lo que hay son clientes nuevos que dicen haber llegado por TikTok. La liga de la bio es una sola para todos los videos.")+
-      it("parcial","▶️ YouTube · por video, si la descripción tiene su liga","El video de vinculación de e.firma (<code>contenido_vinculacion</code>) sí se mide. YouTube no es opción en «¿cómo nos conociste?». Varias ventas de YouTube traen <code>gclid</code>: son anuncios de Google.")+
+      it("parcial","▶️ YouTube · por video, si la descripción tiene su liga","El video de vinculación de e.firma (<code>contenido_vinculacion</code>) sí se mide. YouTube no es opción en «¿cómo nos conociste?».")+
       it("no","💼 LinkedIn · solo lo declarado","Sin ventas por liga. Hay signups y clientes nuevos que dicen venir de LinkedIn.")+
       it("no","💰 Montos · fuera a propósito","El sitio es público, así que la pestaña solo muestra conteos, sin montos ni datos de clientes.");
   }
@@ -4528,8 +4518,6 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
       document.getElementById("sv_fuente").textContent="No se pudo leer datos-ventas.json: "+e.message+". Si abriste el archivo directo, levanta un servidor (python3 -m http.server).";
     }).finally(()=>{SV.cargando=false;});
   };
-  document.getElementById("sv_tipo").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return;
-    SV.tipo=b.dataset.t; [...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b)); svPintar();});
   document.getElementById("sv_metrica").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return;
     SV.met=b.dataset.m; [...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b)); svTabla();});
 
@@ -4596,7 +4584,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
       return `<div class="kpi"><div class="label">${RED[r].ic} ${RED[r].l}</div><div class="val">${fmt(ps.length)} <span style="font-size:13px;font-weight:600;color:var(--muted)">posts</span></div>
         <div class="delta flat">${fmt(v)} ${r==="linkedin"?"impresiones":"vistas"} · ${fmt(it)} interacciones · ER ${v?pct(it/v*100):"—"}</div></div>`; };
     document.getElementById("ua_kpis").innerHTML=redes.filter(r=>r!=="facebook").map(r=>k(r,P.filter(p=>p.red===r))).join("")+
-      `<div class="kpi" style="opacity:.7"><div class="label">📘 Facebook</div><div class="val" style="font-size:16px">Sin datos</div><div class="delta flat">No hay conector orgánico en Windsor</div></div>`;
+      `<div class="kpi" style="opacity:.7"><div class="label">📘 Facebook</div><div class="val" style="font-size:16px">Sin datos</div><div class="delta flat">Windsor no tiene conector de la página</div></div>`;
     // Rankings
     const top=(arr,key)=>arr.slice().sort((a,b)=>(b[key]||0)-(a[key]||0))[0];
     const rk=(lbl,p,v)=>p?`<div class="rk">${th(p)}<div style="min-width:0"><div class="lbl">${lbl}</div><div class="big">${v}</div>
@@ -4613,7 +4601,7 @@ Promise.all([gvizTab("series"),gvizTab("totals"),gvizTab("vids"),gvizTab("vaud")
     // Calendario por red
     document.getElementById("ua_redes").innerHTML=redes.map(r=>{
       const hd=`<div class="hd"><span class="plat ${({tiktok:"tt",instagram:"ig",youtube:"yt",linkedin:"li",facebook:"fb"})[r]}" ${r==="facebook"?'style="background:#2a78d6"':""}>${RED[r].ic} ${RED[r].l}</span>`;
-      if(r==="facebook") return `<div class="ua-net">${hd}</div><div class="ua-nodata">Facebook orgánico no se puede medir todavía: Windsor solo tiene conectados Instagram, TikTok y LinkedIn. Para tenerlo, hay que conectar <code>facebook_organic</code> (Páginas de Facebook) en Windsor.</div></div>`;
+      if(r==="facebook") return `<div class="ua-net">${hd}</div><div class="ua-nodata">Las publicaciones de Facebook no se pueden medir todavía: Windsor solo tiene conectados Instagram, TikTok y LinkedIn. Para tenerlo, hay que conectar <code>facebook_organic</code> (Páginas de Facebook) en Windsor.</div></div>`;
       const ps=P.filter(p=>p.red===r);
       const v=ps.reduce((s,p)=>s+p.vistas,0), it=ps.reduce((s,p)=>s+p.inter,0);
       const cal=D.map((d,i)=>{ const dp=ps.filter(p=>p.dia===d).sort((a,b)=>a.hora.localeCompare(b.hora));

@@ -60,7 +60,7 @@ def main(src, dst):
             continue  # whatsapp_otros = mensajes de heru (utility), no es una red
         ventas[m][red][tipo] += n(f["ventas"])
         ventas_nuevos[m][red][tipo] += n(f["ventas_nuevos"])
-        if tipo == "organico" and (f.get("cont") or f.get("camp")):
+        if f.get("cont") or f.get("camp"):  # todo junto: Mich no quiere separar pauta de orgánico
             k = (red, f.get("camp") or "", f.get("cont") or "")
             p = piezas.setdefault(k, {"red": red, "utm_campaign": k[1], "utm_content": k[2],
                                       "meses": {}, "ventas": 0})
